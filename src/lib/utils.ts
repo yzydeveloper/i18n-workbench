@@ -20,13 +20,13 @@ import { defaultConfig } from './constant'
 export function isJSON(obj: Object) {
     return obj.constructor === Object
 }
+
 /**
  *
  * @param customSetting 自定义配置
  * @param key key
  * @returns
  */
-
 export function getSettingValue<T extends DefaultConfig, K extends keyof T>(customSetting: T, key: K) {
     return customSetting && Object.prototype.hasOwnProperty.call(customSetting, key)
         ? customSetting[key]
@@ -38,7 +38,6 @@ export function getSettingValue<T extends DefaultConfig, K extends keyof T>(cust
  * @param params
  * @returns
  */
-
 export function readSetting<T extends DefaultConfig, K extends keyof T>(params: ReadSetting): K | Partial<T> {
     const { fsPath, key, specific = true, ignoreCustom = false } = params
     const dirName = path.dirname(fsPath)
@@ -98,6 +97,7 @@ const varifyFile = (params: VarifyFile): ReturnReadLocalesInfo[] => {
     })
     return result
 }
+
 /**
  * 获取本地国际化
  * @param params
