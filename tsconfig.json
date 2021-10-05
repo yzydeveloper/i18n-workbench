@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "module": "commonjs",
     "target": "es2017",
     "outDir": "out",
@@ -11,6 +12,11 @@
     "esModuleInterop": true,
     "strict": true,
     "noUnusedLocals": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "~/*": [
+        "src/*"
+      ]
+    }
   }
 }

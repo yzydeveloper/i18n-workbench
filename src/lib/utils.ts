@@ -9,8 +9,7 @@ import type {
     ReturnReadLocalesInfo,
 } from './constant'
 import { Messages } from './message'
-import { pkgFileName, customConfigFileName } from './constant'
-import { defaultConfig } from './constant'
+import { defaultConfig, pkgFileName, customConfigFileName } from './constant'
 
 /**
  * JSON检测

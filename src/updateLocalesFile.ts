@@ -1,10 +1,10 @@
 import type { TextEditor } from 'vscode'
-import type { ReturnReadLocalesInfo } from './lib/constant'
+import type { ReturnReadLocalesInfo } from '~/lib/constant'
 import { window } from 'vscode'
 import { dirname } from 'path'
 import { mkdirSync, existsSync } from 'fs'
-import { beforeWriteJson } from './core/update'
-import { readSetting, readLocalesInfo } from './lib/utils'
+import { beforeWriteJson } from '~/core/update'
+import { readSetting, readLocalesInfo } from '~/lib/utils'
 export function updateLocalesFile() {
     const editor: TextEditor | undefined = window.activeTextEditor
     if (!editor) return
