@@ -6,7 +6,7 @@ export function activate(context: ExtensionContext) {
     // 提取
     commands.registerCommand('hero.update', updateLocalesFile)
     // 替换
-    commands.registerCommand('hero.hero', () => {
+    commands.registerCommand('hero.transform', () => {
         console.log('hero')
     })
     // 查看

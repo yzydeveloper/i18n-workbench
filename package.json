@@ -38,8 +38,8 @@
 				"title": "Update Locales File"
 			},
 			{
-				"command": "hero.hero",
-				"title": "Hero I18n"
+				"command": "hero.transform",
+				"title": "Transform I18n"
 			},
 			{
 				"command": "hero.show",
@@ -55,7 +55,7 @@
 				},
 				{
 					"when": "editorFocus && resourceLangId =~ /^javascript$|^vue$/",
-					"command": "hero.hero",
+					"command": "hero.transform",
 					"group": "1_modification@5"
 				},
 				{
@@ -71,7 +71,7 @@
 					"group": "1_modification@4"
 				},
 				{
-					"command": "hero.hero",
+					"command": "hero.transform",
 					"when": "resourceLangId =~ /^vue$|^javascript$/",
 					"group": "1_modification@5"
 				},
