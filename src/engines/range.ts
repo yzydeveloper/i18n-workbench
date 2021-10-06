@@ -5,7 +5,7 @@ import {
     templateEndRegexp,
     scriptBeginRegexp,
     scripteEndRegexp,
-} from './constant'
+} from '../lib/constant'
 
 export interface BeginEnd {
     begin: number
