@@ -1,7 +1,6 @@
 import type { TextEditor } from 'vscode'
-import type { LocalesPath, PuidType } from '~/lib/constant'
-import { retrieveCN } from '~/engines/retrieveCN'
-import { readSetting } from '~/lib/utils'
+import type { LocalesPath, PuidType } from '~/utils'
+import { retrieveCN, readSetting } from '~/utils'
 /**
  * 写入文件前
  * @param currentEditor

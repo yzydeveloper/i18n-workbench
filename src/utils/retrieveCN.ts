@@ -1,7 +1,7 @@
 import type { TextEditor } from 'vscode'
-import type { PuidType } from '~/lib/constant'
-import { commentRegexp } from '~/lib/constant'
-import { getRange } from '~/engines/range'
+import type { PuidType } from '.'
+import { commentRegexp } from '.'
+import { getRange } from '.'
 export function getWord() { }
 
 export function retrieveCN(currentEditor: TextEditor, puidType: PuidType) {
