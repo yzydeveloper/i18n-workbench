@@ -1,5 +1,6 @@
 import type { TextEditor } from 'vscode'
 import type { PuidType } from '.'
+import type { PuidConstructor } from 'puid'
 import Puid from 'puid'
 import {
     commentRegexp,
@@ -31,12 +32,12 @@ export function getWord({ lineText, reg, resoloveReg, initWords = [] }: GetWord)
     return words
 }
 
-export function newWords(arr: Array<string>, puid) {
-    return arr.reduce((p, c) => {
+export function newWords(arr: Array<string>, puid: PuidConstructor) {
+    return arr.reduce((result, current) => {
         const id = puid.generate()
-        p[id] = c
-        return p
-    }, {})
+        result[id] = current
+        return result
+    }, Object.create(null))
 }
 export function retrieveCN(currentEditor: TextEditor, puidType: PuidType) {
     const { lineCount, languageId, lineAt } = currentEditor.document
