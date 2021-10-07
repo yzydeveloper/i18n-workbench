@@ -113,8 +113,8 @@ export function retrieveCN(currentEditor: TextEditor, puidType: PuidType) {
 
         lines.push(...cnWordArr)
     }
+
     const puid = new Puid(puidType === 'short')
     const result = newWords(Array.from(new Set(lines)), puid)
-
     return result
 }
