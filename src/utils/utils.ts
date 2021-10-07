@@ -16,7 +16,7 @@ import { defaultConfig, pkgFileName, customConfigFileName } from '.'
  * @param obj
  * @returns
  */
-export function isJSON(obj: Object) {
+export function isJSON(obj: object) {
     return obj.constructor === Object
 }
 

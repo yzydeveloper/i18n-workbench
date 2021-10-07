@@ -6,12 +6,12 @@ export class Messages {
     static showActionableMessage(
         type: 'info' | 'warn' | 'error',
         message: string,
-        needOpen: Boolean = true,
+        needOpen: boolean,
         callback?: { name: string; func: Function }
     ): Promise<MessageItem | undefined> {
         const actions = [
             { title: 'Got it' },
-            { title: needOpen && 'View it' },
+            { title: needOpen ? 'View it' : '' },
             { title: callback && callback.name || '' }
         ].filter(v => !!v.title)
 
