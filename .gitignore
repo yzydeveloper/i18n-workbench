@@ -4,3 +4,5 @@ node_modules
 *.vsix
 .vscode/.as-fs
 dist
+yarn.lock
+package-lock.json
