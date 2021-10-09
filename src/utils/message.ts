@@ -6,7 +6,7 @@ export class Messages {
     static showActionableMessage(
         type: 'info' | 'warn' | 'error',
         message: string,
-        needOpen: boolean,
+        needOpen?: boolean,
         callback?: { name: string; func: Function }
     ): Promise<MessageItem | undefined> {
         const actions = [
