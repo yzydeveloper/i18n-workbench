@@ -3,7 +3,7 @@ import type { ReturnReadLocalesInfo } from '~/utils'
 import { window } from 'vscode'
 import { dirname } from 'path'
 import { mkdirSync, existsSync } from 'fs'
-import { beforeWriteJson } from '~/core/update'
+import { beforeWriteJson } from '~/lib/update'
 import { readSetting, readLocalesInfo } from '~/utils'
 export function updateLocalesFile() {
     const editor: TextEditor | undefined = window.activeTextEditor
