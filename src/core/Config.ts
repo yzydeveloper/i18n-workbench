@@ -8,8 +8,16 @@ export default class Config {
         return this.extName || EXT_NAMESPACE
     }
 
-    static localesPath(): string {
-        return this.getConfig<string>('localesPaths') || ''
+    static get localesPath(): string {
+        return this.getConfig<string>('localesPaths') ?? ''
+    }
+
+    static get langFile(): string[] {
+        return this.getConfig<string[]>('langFile') ?? []
+    }
+
+    static get puidType(): string {
+        return this.getConfig<string>('puidType') ?? ''
     }
 
     private static getConfig<T = any>(key: string, scope?: ConfigurationScope | undefined): T | undefined {

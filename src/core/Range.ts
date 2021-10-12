@@ -5,7 +5,7 @@ import {
     templateEndRegexp,
     scriptBeginRegexp,
     scripteEndRegexp,
-} from '.'
+} from '../meta'
 
 export interface BeginEnd {
     begin: number

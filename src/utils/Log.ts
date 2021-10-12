@@ -1,7 +1,7 @@
 import { OutputChannel, window } from 'vscode'
 import Config from '../core/Config'
 
-export default class Log {
+export class Log {
     private static _channel: OutputChannel
 
     static get outputChannel(): OutputChannel {

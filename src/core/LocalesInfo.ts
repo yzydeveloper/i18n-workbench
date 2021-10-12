@@ -4,9 +4,10 @@ import type {
     ReadLocalesInfo,
     VarifyFile,
     ReturnReadLocalesInfo,
-} from './constant'
-import { Messages } from './message'
-import { pkgFileName, readSetting } from '.'
+} from '~/core'
+import Config from './Config'
+import { Messages } from '~/utils/Message'
+import { PROJECT_ID } from '../meta'
 
 /**
  * JSON检测
@@ -46,16 +47,10 @@ const varifyFile = (params: VarifyFile): ReturnReadLocalesInfo[] => {
 export function readLocalesInfo(params: ReadLocalesInfo): ReturnReadLocalesInfo[] | string {
     const { fsPath, defaultLocalesPath, isGetRootPath = false, showInfo = false, showError = true } = params
     const dirName = path.dirname(fsPath)
-    if (fs.existsSync(path.join(dirName, pkgFileName))) {
+    if (fs.existsSync(path.join(dirName, PROJECT_ID))) {
         if (isGetRootPath) return dirName
-        const lang = readSetting({
-            fsPath: path.join(dirName, pkgFileName),
-            key: 'langFile'
-        }) as string[]
-        const localesPath = readSetting({
-            fsPath: path.join(dirName, pkgFileName),
-            key: 'defaultLocalesPath',
-        }) as string
+        const lang = Config.langFile
+        const localesPath = Config.localesPath
 
         const jsonPath = lang.map(item => {
             if (defaultLocalesPath) return path.join(dirName, defaultLocalesPath, item)

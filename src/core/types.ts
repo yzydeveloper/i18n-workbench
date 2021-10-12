@@ -31,23 +31,14 @@ export interface ReadLocalesInfo {
     showInfo?: boolean
     showError?: boolean
 }
+
 export interface VarifyFile {
     fsPath: string[]
     showInfo?: boolean
     showError?: boolean
 }
+
 export interface ReturnReadLocalesInfo {
     localesPath: LocalesPath
     exist: boolean
 }
-
-export const defaultConfig = {
-    localesPath: 'src/locales',
-    langFile: ['zh-CN.json', 'en-US.json'],
-    hover: true,
-    puidType: 'short',
-}
-
-export const pkgFileName = 'package.json'
-
-export const customConfigFileName = 'i18n.json'

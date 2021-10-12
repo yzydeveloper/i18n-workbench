@@ -1,18 +1,16 @@
 import type { TextEditor } from 'vscode'
-import type { ReturnReadLocalesInfo } from '~/utils'
+import type { ReturnReadLocalesInfo } from '~/core'
 import { window } from 'vscode'
 import { dirname } from 'path'
 import { mkdirSync, existsSync } from 'fs'
 import { beforeWriteJson } from '~/handlers/update'
-import { readSetting, readLocalesInfo } from '~/utils'
+import { readLocalesInfo } from '~/core'
+import Config from '~/core/Config'
 export function updateLocalesFile() {
     const editor: TextEditor | undefined = window.activeTextEditor
     if (!editor) return
     const { fsPath } = editor.document.uri
-    const defaultLocalesPath = readSetting({
-        fsPath,
-        key: 'localesPath'
-    }) as string
+    const defaultLocalesPath = Config.localesPath
 
     const localesFileInfo = readLocalesInfo({
         fsPath,

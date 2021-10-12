@@ -3,7 +3,7 @@ import { updateLocalesFile } from './updateLocalesFile'
 import { EXT_NAMESPACE } from './meta'
 import Config from './core/Config'
 Config.extName = EXT_NAMESPACE
-import Log from './utils/Log'
+import { Log } from './utils/Log'
 
 export function activate(context: ExtensionContext) {
     Log.info(`🌞 ${Config.extensionName} Activated`)

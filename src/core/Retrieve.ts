@@ -1,5 +1,5 @@
 import type { TextEditor } from 'vscode'
-import type { PuidType } from '.'
+import type { PuidType } from './types'
 import type { PuidConstructor } from 'puid'
 import Puid from 'puid'
 import {
@@ -10,10 +10,11 @@ import {
     scriptRegexp,
     spaceRegexp,
     quotationRegexp
-} from '.'
+} from '../meta'
 import { getRange } from '.'
 
 type Words = string[]
+
 interface GetWord {
     lineText: string
     reg: RegExp
@@ -39,6 +40,7 @@ export function newWords(arr: Array<string>, puid: PuidConstructor) {
         return result
     }, Object.create(null))
 }
+
 export function retrieveCN(currentEditor: TextEditor, puidType: PuidType) {
     const { lineCount, languageId, lineAt } = currentEditor.document
     const isJavascript = languageId === 'javascript'
