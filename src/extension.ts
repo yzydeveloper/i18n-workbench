@@ -1,17 +1,16 @@
 import { commands, ExtensionContext } from 'vscode'
 import { updateLocalesFile } from './updateLocalesFile'
-// 扩展第一次执行命令时
+import { EXT_NAMESPACE } from './meta'
+import Config from './core/Config'
+Config.extName = EXT_NAMESPACE
+import Log from './utils/Log'
+
 export function activate(context: ExtensionContext) {
-    console.log('Congratulations, your extension "hero-i18n" is now active!')
-    // 提取
-    commands.registerCommand('hero.update', updateLocalesFile)
-    // 替换
-    commands.registerCommand('hero.transform', () => {
+    Log.info(`🌞 ${Config.extensionName} Activated`)
+
+    commands.registerCommand('hero-i18n.update', updateLocalesFile)
+    commands.registerCommand('hero-i18n.transform', () => {
         console.log('hero')
-    })
-    // 查看
-    commands.registerCommand('hero.show', () => {
-        console.log('show')
     })
     console.log(context)
 }

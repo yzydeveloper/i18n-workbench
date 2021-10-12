@@ -1,4 +1,5 @@
 {
+	"publisher": "yzydeveloper",
 	"name": "hero-i18n",
 	"displayName": "hero-i18n",
 	"description": "hero-i18n",
@@ -34,53 +35,66 @@
 		},
 		"commands": [
 			{
-				"command": "hero.update",
+				"command": "hero-i18n.update",
 				"title": "Update Locales File"
 			},
 			{
-				"command": "hero.transform",
+				"command": "hero-i18n.transform",
 				"title": "Transform I18n"
-			},
-			{
-				"command": "hero.show",
-				"title": "Show Locales File"
 			}
 		],
 		"menus": {
 			"editor/context": [
 				{
 					"when": "editorFocus && resourceLangId =~ /^javascript$|^vue$/",
-					"command": "hero.update",
+					"command": "hero-i18n.update",
 					"group": "1_modification@4"
 				},
 				{
 					"when": "editorFocus && resourceLangId =~ /^javascript$|^vue$/",
-					"command": "hero.transform",
+					"command": "hero-i18n.transform",
 					"group": "1_modification@5"
-				},
-				{
-					"when": "editorFocus && resourceLangId =~ /^javascript$|^vue$/",
-					"command": "hero.show",
-					"group": "1_modification@6"
 				}
 			],
 			"explorer/context": [
 				{
-					"command": "hero.update",
+					"command": "hero-i18n.update",
 					"when": "resourceLangId =~ /^vue$|^javascript$/",
 					"group": "1_modification@4"
 				},
 				{
-					"command": "hero.transform",
+					"command": "hero-i18n.transform",
 					"when": "resourceLangId =~ /^vue$|^javascript$/",
 					"group": "1_modification@5"
-				},
-				{
-					"command": "hero.show",
-					"when": "resourceLangId =~ /^vue$|^javascript$/",
-					"group": "1_modification@6"
 				}
 			]
+		},
+		"configuration": {
+			"type": "object",
+			"title": "hero-i18n",
+			"properties": {
+				"hero-i18n.localesPath": {
+					"type": "string",
+					"default": "src/locales",
+					"description": "翻译文件的目录（相对于项目根目录）"
+				},
+				"hero-i18n.langFile": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						"zh-CN",
+						"en-US"
+					],
+					"description": "指定国际化JSON文件名称,且支持的国际化"
+				},
+				"hero-i18n.puidType": {
+					"type": "string",
+					"default": "short",
+					"description": "国际化key的唯一类型"
+				}
+			}
 		}
 	},
 	"scripts": {
