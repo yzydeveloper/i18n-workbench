@@ -1,18 +1,16 @@
-import { commands, ExtensionContext } from 'vscode'
-import { updateLocalesFile } from './updateLocalesFile'
+import { ExtensionContext } from 'vscode'
 import { EXT_NAMESPACE } from './meta'
 import Config from './core/Config'
 Config.extName = EXT_NAMESPACE
 import { Log } from './utils/Log'
+import ExtractCommand from '~/commands/extract'
+import TransformCommand from '~/commands/transform'
 
 export function activate(context: ExtensionContext) {
     Log.info(`🌞 ${Config.extensionName} Activated`)
 
-    commands.registerCommand('hero-i18n.update', updateLocalesFile)
-    commands.registerCommand('hero-i18n.transform', () => {
-        console.log('hero')
-    })
-    console.log(context)
+    ExtractCommand(context)
+    TransformCommand(context)
 }
 
 // 扩展被停用时

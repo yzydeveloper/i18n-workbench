@@ -35,8 +35,8 @@
 		},
 		"commands": [
 			{
-				"command": "hero-i18n.update",
-				"title": "Update Locales File"
+				"command": "hero-i18n.extract",
+				"title": "Extract To File"
 			},
 			{
 				"command": "hero-i18n.transform",
@@ -47,7 +47,7 @@
 			"editor/context": [
 				{
 					"when": "editorFocus && resourceLangId =~ /^javascript$|^vue$/",
-					"command": "hero-i18n.update",
+					"command": "hero-i18n.extract",
 					"group": "1_modification@4"
 				},
 				{
@@ -58,7 +58,7 @@
 			],
 			"explorer/context": [
 				{
-					"command": "hero-i18n.update",
+					"command": "hero-i18n.extract",
 					"when": "resourceLangId =~ /^vue$|^javascript$/",
 					"group": "1_modification@4"
 				},
