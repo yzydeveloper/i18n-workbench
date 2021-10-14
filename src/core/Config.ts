@@ -20,6 +20,14 @@ export default class Config {
         return this.getConfig<string>('puidType') ?? ''
     }
 
+    static get libreTranslateApiRoot(): string {
+        return this.getConfig<string>('translate.libre.apiRoot') ?? ''
+    }
+
+    static get translateEngines(): string[] {
+        return this.getConfig<string[]>('translate.engines') || ['google']
+    }
+
     private static getConfig<T = any>(key: string, scope?: ConfigurationScope | undefined): T | undefined {
         let config = workspace
             .getConfiguration(this.extensionName, scope)

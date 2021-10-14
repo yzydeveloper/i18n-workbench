@@ -93,6 +93,26 @@
 					"type": "string",
 					"default": "short",
 					"description": "国际化key的唯一类型"
+				},
+				"hero-i18n.translate.libre.apiRoot": {
+					"type": "string",
+					"default": "http://localhost:5000",
+					"description": ""
+				},
+				"hero-i18n.translate.engines": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"enum": [
+							"google",
+							"google-cn",
+							"libretranslate"
+						],
+						"default": [
+							"google-cn"
+						],
+						"description": "翻译服务提供商"
+					}
 				}
 			}
 		}
@@ -109,6 +129,7 @@
 		"@antfu/eslint-config": "^0.6.2",
 		"@types/node": "^14.14.37",
 		"@types/vscode": "^1.52.0",
+		"axios": "^0.23.0",
 		"eslint": "^7.23.0",
 		"pkg-up": "^3.1.0",
 		"puid": "^1.0.7",
