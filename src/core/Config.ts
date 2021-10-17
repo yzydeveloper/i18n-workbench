@@ -1,3 +1,4 @@
+import path from 'path'
 import type { ConfigurationScope } from 'vscode'
 import { workspace } from 'vscode'
 import { EXT_NAMESPACE } from './../meta'
@@ -9,7 +10,7 @@ export default class Config {
     }
 
     static get localesPath(): string {
-        return this.getConfig<string>('localesPaths') ?? ''
+        return this.getConfig<string>('localesPath') ?? ''
     }
 
     static get langFile(): string[] {
@@ -26,6 +27,10 @@ export default class Config {
 
     static get translateEngines(): string[] {
         return this.getConfig<string[]>('translate.engines') || ['google']
+    }
+
+    static updateLocalesPath(path: string) {
+        this.setConfig('localesPath', path)
     }
 
     private static getConfig<T = any>(key: string, scope?: ConfigurationScope | undefined): T | undefined {

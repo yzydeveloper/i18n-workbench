@@ -35,6 +35,14 @@
 		},
 		"commands": [
 			{
+				"command": "hero-i18n.config-locales",
+				"title": "手动设置语言目录"
+			},
+			{
+				"command": "hero-i18n.config-locales-auto",
+				"title": "自动设置语言目录"
+			},
+			{
 				"command": "hero-i18n.extract",
 				"title": "Extract To File"
 			},
@@ -75,7 +83,6 @@
 			"properties": {
 				"hero-i18n.localesPath": {
 					"type": "string",
-					"default": "src/locales",
 					"description": "翻译文件的目录（相对于项目根目录）"
 				},
 				"hero-i18n.langFile": {
@@ -131,6 +138,7 @@
 		"@types/vscode": "^1.52.0",
 		"axios": "^0.23.0",
 		"eslint": "^7.23.0",
+		"fast-glob": "^3.2.7",
 		"pkg-up": "^3.1.0",
 		"puid": "^1.0.7",
 		"tsup": "^4.8.21",

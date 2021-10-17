@@ -18,6 +18,12 @@ export class Log {
         this.outputChannel.appendLine(`${'\t'.repeat(intend)}${message}`)
     }
 
+    static warn(message: string, prompt = false, intend = 0) {
+        if (prompt)
+            window.showWarningMessage(message)
+        Log.info(`⚠ WARN: ${message}`, intend)
+    }
+
     static error(err: Error | string, prompt = true, intend = 0) {
         if (prompt)
             window.showErrorMessage(`${Config.extName} Error: ${err.toString()}`)
