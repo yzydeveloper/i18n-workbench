@@ -1,4 +1,3 @@
-import path from 'path'
 import type { ConfigurationScope } from 'vscode'
 import { workspace } from 'vscode'
 import { EXT_NAMESPACE } from './../meta'
@@ -27,6 +26,10 @@ export default class Config {
 
     static get translateEngines(): string[] {
         return this.getConfig<string[]>('translate.engines') || ['google']
+    }
+
+    static get namespace(): boolean | undefined {
+        return this.getConfig<boolean>('namespace')
     }
 
     static updateLocalesPath(path: string) {

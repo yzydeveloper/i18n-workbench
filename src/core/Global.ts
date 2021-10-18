@@ -92,4 +92,17 @@ export class Global {
             await this.update()
         }
     }
+
+    static getPathMatcher() {
+        if (Config.namespace) {
+            return {
+                matcher: '{locale}/{namespaces}.{ext}',
+                regex: /^(?<locale>[\w-_]+)\/(?<namespace>.+)\.(?<ext>)$/
+            }
+        }
+        return {
+            matcher: '{locale}.{ext}',
+            regex: /^(?<locale>[\w-_]+)\.(?<ext>)$/
+        }
+    }
 }

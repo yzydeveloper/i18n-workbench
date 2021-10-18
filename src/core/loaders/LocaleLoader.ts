@@ -2,8 +2,14 @@ import { resolve } from 'path'
 import fg from 'fast-glob'
 import { Loader } from './Loader'
 import { Log } from '~/utils/Log'
+import { Global } from '..'
 import Config from '../Config'
 export class LocaleLoader extends Loader {
+    private matcher: { matcher: string; regex: RegExp } = {
+        matcher: '{locale}.{ext}',
+        regex: /^(?<locale>[\w-_]+)\.(?<ext>)$/
+    }
+
     constructor(public readonly rootPath: string) {
         super(`[LOCALE]${rootPath}`)
     }
@@ -18,6 +24,8 @@ export class LocaleLoader extends Loader {
 
     async init() {
         await this.loadDirectory(this.localesDir)
+        this.matcher = Global.getPathMatcher()
+
         Log.divider()
     }
 
@@ -25,6 +33,7 @@ export class LocaleLoader extends Loader {
         const files = await fg('**/*.*', {
             cwd: searchingPath,
             onlyFiles: true,
+            // ignore:[]
         })
         console.log(files)
 

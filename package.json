@@ -120,6 +120,16 @@
 						],
 						"description": "翻译服务提供商"
 					}
+				},
+				"hero-i18n.sourceLanguage":{
+					"type":"string",
+					"default":"zh-CN",
+					"description": "翻译源语言"
+				},
+				"hero-i18n.namespace":{
+					"type":"boolean",
+					"default":false,
+					"description": "启用命名空间"
 				}
 			}
 		}
