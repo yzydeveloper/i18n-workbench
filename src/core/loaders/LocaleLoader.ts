@@ -44,5 +44,7 @@ export class LocaleLoader extends Loader {
     private async loadFile(dirpath: string, relativePath: string) {
         console.log(dirpath, 'dirpath')
         console.log(relativePath, 'relativePath')
+        const fullpath = resolve(dirpath, relativePath)
+        console.log(fullpath, 'fullpath')
     }
 }
