@@ -49,3 +49,10 @@ export interface ReturnReadLocalesInfo {
     localesPath: LocalesPath
     exist: boolean
 }
+
+export interface ParsedFile {
+    filePath: string
+    dirPath: string
+    locale: string
+    value: string
+}

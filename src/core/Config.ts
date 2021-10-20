@@ -32,6 +32,10 @@ export default class Config {
         return this.getConfig<boolean>('namespace')
     }
 
+    static get ignoreFiles() {
+        return this.getConfig<string[]>('ignoreFiles') ?? []
+    }
+
     static updateLocalesPath(path: string) {
         this.setConfig('localesPath', path)
     }

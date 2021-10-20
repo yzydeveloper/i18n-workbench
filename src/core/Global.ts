@@ -2,6 +2,7 @@ import type { ExtensionContext, WorkspaceFolder } from 'vscode'
 import { workspace, window } from 'vscode'
 import { ConfigLocalesGuide } from '~/commands/configLocalePaths'
 import { LocaleLoader } from './loaders/LocaleLoader'
+import { AvailableParsers } from '~/parsers'
 import { Log } from '~/utils'
 import Config from './Config'
 export class Global {
@@ -93,16 +94,9 @@ export class Global {
         }
     }
 
-    static getPathMatcher() {
-        if (Config.namespace) {
-            return {
-                matcher: '{locale}/{namespaces}.{ext}',
-                regex: /^(?<locale>[\w-_]+)\/(?<namespace>.+)\.(?<ext>)$/
-            }
-        }
-        return {
-            matcher: '{locale}.{ext}',
-            regex: /^(?<locale>[\w-_]+)\.(?<ext>)$/
-        }
+    static getMatchedParser(ext: string) {
+        if (!ext.startsWith('.') || !ext.includes('.')) return
+        const id = ext.slice(1)
+        return AvailableParsers.find(parser => parser.id === id)
     }
 }

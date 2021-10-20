@@ -15,6 +15,27 @@
 		"*"
 	],
 	"main": "./dist/extension.js",
+	"scripts": {
+		"vscode:prepublish": "npm run build",
+		"build": "tsup src/extension.ts --dts --external=vscode",
+		"dev": "npm run build -- --watch"
+	},
+	"keywords": [
+		"i18n"
+	],
+	"devDependencies": {
+		"@antfu/eslint-config": "^0.6.2",
+		"@types/node": "^14.14.37",
+		"@types/vscode": "^1.52.0",
+		"axios": "^0.23.0",
+		"eslint": "^7.23.0",
+		"fast-glob": "^3.2.7",
+		"pkg-up": "^3.1.0",
+		"puid": "^1.0.7",
+		"tsup": "^4.8.21",
+		"types-package-json": "^2.0.31",
+		"typescript": "^4.2.3"
+	},
 	"contributes": {
 		"viewsContainers": {
 			"activitybar": [
@@ -121,38 +142,24 @@
 						"description": "翻译服务提供商"
 					}
 				},
-				"hero-i18n.sourceLanguage":{
-					"type":"string",
-					"default":"zh-CN",
+				"hero-i18n.sourceLanguage": {
+					"type": "string",
+					"default": "zh-CN",
 					"description": "翻译源语言"
 				},
-				"hero-i18n.namespace":{
-					"type":"boolean",
-					"default":false,
+				"hero-i18n.namespace": {
+					"type": "boolean",
+					"default": false,
 					"description": "启用命名空间"
+				},
+				"hero-i18n.ignoreFiles": {
+					"type": "array",
+					"item": {
+						"type": "string"
+					},
+					"description": "加载时要忽略的区域设置文件。\n接受一个glob数组"
 				}
 			}
 		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run build",
-		"build": "tsup src/extension.ts --dts --external=vscode",
-		"dev": "npm run build -- --watch"
-	},
-	"keywords": [
-		"i18n"
-	],
-	"devDependencies": {
-		"@antfu/eslint-config": "^0.6.2",
-		"@types/node": "^14.14.37",
-		"@types/vscode": "^1.52.0",
-		"axios": "^0.23.0",
-		"eslint": "^7.23.0",
-		"fast-glob": "^3.2.7",
-		"pkg-up": "^3.1.0",
-		"puid": "^1.0.7",
-		"tsup": "^4.8.21",
-		"types-package-json": "^2.0.31",
-		"typescript": "^4.2.3"
 	}
 }
