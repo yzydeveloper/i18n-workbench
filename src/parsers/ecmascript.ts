@@ -10,6 +10,6 @@ export class EcmascriptParser {
         const texts = await document.getText()
         if (!texts) return {}
         // eslint-disable-next-line no-eval
-        return eval(`(${texts.replace(regex, '')})`)
+        return (0, eval)(`(${texts.replace(regex, '')})`)
     }
 }
