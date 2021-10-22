@@ -1,4 +1,4 @@
-import type { ExtensionContext } from 'vscode'
+import type { ExtensionContext, TextEditor } from 'vscode'
 import { workspace, window } from 'vscode'
 export class CurrentFile {
     static watch(ctx: ExtensionContext) {
@@ -18,5 +18,9 @@ export class CurrentFile {
         // }))
         // ctx.subscriptions.push(Analyst.watch())
         // this.update(window.activeTextEditor?.document.uri)
+    }
+
+    static retrieveSourceLanguage(currentEditor: TextEditor) {
+        console.log(currentEditor)
     }
 }

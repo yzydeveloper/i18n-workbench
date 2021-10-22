@@ -81,8 +81,6 @@ export class LocaleLoader extends Loader {
     }
 
     private async loadFile(dirPath: string, relativePath: string) {
-        console.log(this._files)
-
         try {
             const result = this.getFileInfo(dirPath, relativePath)
             if (!result) return
