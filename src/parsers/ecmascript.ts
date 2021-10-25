@@ -27,7 +27,7 @@ export class EcmascriptParser {
                     expressionStatement(
                         assignmentExpression(
                             '=',
-                            memberExpression(identifier('Identifier'), identifier('exports')),
+                            memberExpression(identifier('module'), identifier('exports')),
                             objectExpression(path.node.declaration.properties),
                         )
                     )
