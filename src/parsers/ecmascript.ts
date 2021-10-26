@@ -1,5 +1,6 @@
 import type { NodePath } from '@babel/traverse'
 import { workspace } from 'vscode'
+import { Module } from 'module'
 import {
     expressionStatement,
     assignmentExpression,
@@ -9,18 +10,24 @@ import {
 } from '@babel/types'
 import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
+import generate from '@babel/generator'
 export class EcmascriptParser {
     constructor(
         public readonly id: 'js' | 'ts' = 'js'
     ) { }
 
     async load(filepath: string) {
-        const regex = /export default/
         const document = await workspace.openTextDocument(filepath)
         const texts = await document.getText()
+        if (!texts) return {}
+        return this.wrapper(texts)
+    }
+
+    wrapper(texts: string) {
         const ast = parse(texts, {
             sourceType: 'module'
         })
+
         traverse(ast, {
             ExportDefaultDeclaration(path: NodePath) {
                 path.replaceWith(
@@ -34,9 +41,9 @@ export class EcmascriptParser {
                 )
             }
         })
-        console.log(ast, 'ast')
-        if (!texts) return {}
-        // eslint-disable-next-line no-eval
-        return (0, eval)(`(${texts.replace(regex, '')})`)
+        const module = new Module('my-module')
+        const { code } = generate(ast)
+        module._compile(code, 'my-module')
+        return module.exports
     }
 }
