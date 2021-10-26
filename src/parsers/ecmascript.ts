@@ -41,9 +41,9 @@ export class EcmascriptParser {
                 )
             }
         })
-        const module = new Module('my-module')
+        const module = new Module('module')
         const { code } = generate(ast)
-        module._compile(code, 'my-module')
+        module._compile(code, 'module')
         return module.exports
     }
 }
