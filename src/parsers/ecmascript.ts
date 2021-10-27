@@ -43,11 +43,8 @@ export class EcmascriptParser {
         })
         const module = new Module('module')
         const { code } = generate(ast)
-<<<<<<< HEAD
 
         // @ts-ignore: Unreachable code error
-=======
->>>>>>> 140668a6d1fdb89b6310f920c6779ddf57d136c7
         module._compile(code, 'module')
         return module.exports
     }
