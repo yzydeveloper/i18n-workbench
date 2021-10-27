@@ -29,7 +29,7 @@ export class EcmascriptParser {
         })
 
         traverse(ast, {
-            ExportDefaultDeclaration(path: NodePath) {
+            ExportDefaultDeclaration(path: NodePath<{ declaration: any }>) {
                 path.replaceWith(
                     expressionStatement(
                         assignmentExpression(
@@ -41,9 +41,11 @@ export class EcmascriptParser {
                 )
             }
         })
-        const module = new Module('my-module')
+        const module = new Module('module')
         const { code } = generate(ast)
-        module._compile(code, 'my-module')
+
+        // @ts-ignore: Unreachable code error
+        module._compile(code, 'module')
         return module.exports
     }
 }
