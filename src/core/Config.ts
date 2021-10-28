@@ -1,4 +1,4 @@
-import type { ConfigurationScope } from 'vscode'
+import type { ConfigurationScope, WorkspaceFolder } from 'vscode'
 import { workspace } from 'vscode'
 import { EXT_NAMESPACE } from './../meta'
 export default class Config {
@@ -10,6 +10,10 @@ export default class Config {
 
     static get localesPath(): string {
         return this.getConfig<string>('localesPath') ?? ''
+    }
+
+    static getLocalesPathsInScope(scope: WorkspaceFolder): string | undefined {
+        return this.getConfig('localesPath', scope)
     }
 
     static get langFile(): string[] {

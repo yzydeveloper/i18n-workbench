@@ -27,11 +27,22 @@ export class Global {
         return this._rootPath
     }
 
-    static get localesPath(): string {
-        return Config.localesPath
+    static get loader() {
+        return this._loaders[this._rootPath]
+    }
+
+    static get localesPath(): string | undefined {
+        let config
+
+        if (this._currentWorkspaceFolder)
+            config = Config.getLocalesPathsInScope(this._currentWorkspaceFolder)
+        else
+            config = Config.localesPath
+        return config
     }
 
     static async update() {
+        console.log('onDidChangeConfiguration')
         const hasLocalesSet = !!Global.localesPath
 
         if (!hasLocalesSet) {
