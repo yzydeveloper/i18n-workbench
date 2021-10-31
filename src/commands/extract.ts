@@ -9,6 +9,7 @@ export function extractToFile() {
 
     console.log(CurrentFile, 'CurrentFile')
     console.log(Global.loader, 'Global')
+    CurrentFile.retrieveSourceLanguage(window.activeTextEditor)
 }
 
 const m: ExtensionModule = () => {
