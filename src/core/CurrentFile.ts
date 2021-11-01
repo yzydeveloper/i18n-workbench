@@ -1,6 +1,6 @@
 import type { ExtensionContext, TextEditor } from 'vscode'
 import { workspace, window } from 'vscode'
-import { parseComponent } from 'vue-template-compiler'
+import { parse } from '@vue/compiler-sfc'
 export class CurrentFile {
     static watch(ctx: ExtensionContext) {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => {
@@ -22,19 +22,20 @@ export class CurrentFile {
     }
 
     /**
-     * 依靠vue-template-complier解析template和script代码块
+     * 依靠@vue/compiler-sfc解析template和script代码块
      * @param currentEditor
      */
     static retrieveSourceLanguage(currentEditor: TextEditor) {
         const doc = currentEditor.document.getText()
-        const sfc = parseComponent(doc, { pad: 'space', deindent: false })
-        const { template, script } = sfc
+        const { descriptor } = parse(doc)
+        const { template, script } = descriptor
+        console.log(template?.content, 'template')
+        console.log(script?.content, 'script')
+        console.log(template, 'template')
+        console.log(script, 'script')
         const tagContent = template?.content.match(/(>)([^><]*[\u4E00-\u9FA5]+[^><]*)(<)/gm)
         const tagAttr = template?.content.match(/(<[^\/\s]+)([^<>]+)(\/?>)/gm)
         console.log(tagContent, 'tagContent')
         console.log(tagAttr, 'tagAttr')
-
-        // console.log(template?.content, 'template.content')
-        // console.log(script?.content, 'script.content')
     }
 }
