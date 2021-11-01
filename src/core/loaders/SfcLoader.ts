@@ -1,6 +1,6 @@
 import type { Uri } from 'vscode'
 import { Loader } from './Loader'
-export class DocLoader extends Loader {
+export class SfcLoader extends Loader {
     constructor(
         private readonly uri: Uri
     ) {
