@@ -42,7 +42,6 @@ export class Global {
     }
 
     static async update() {
-        console.log('onDidChangeConfiguration')
         const hasLocalesSet = !!Global.localesPath
 
         if (!hasLocalesSet) {

@@ -6,15 +6,11 @@ export class CurrentFile {
     static uri: Uri | undefined
     static _extractor: Extractor | null = null
     static watch(ctx: ExtensionContext) {
-        ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => {
-            console.log(e, 'onDidSaveTextDocument')
-        }))
+        ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
         ctx.subscriptions.push(workspace.onDidChangeTextDocument(e => {
             console.log(e, 'onDidChangeTextDocument')
         }))
-        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => {
-            console.log(e, 'onDidChangeActiveTextEditors')
-        }))
+        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => e?.document && this.update(e.document.uri)))
         this.update(window.activeTextEditor?.document.uri)
     }
 
