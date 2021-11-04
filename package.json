@@ -31,10 +31,8 @@
 		"@babel/traverse": "^7.15.4",
 		"@babel/types": "^7.15.6",
 		"@vue/compiler-core": "^3.2.20",
-		"@vue/compiler-sfc": "^3.2.20",
 		"axios": "^0.23.0",
-		"fast-glob": "^3.2.7",
-		"puid": "^1.0.7"
+		"fast-glob": "^3.2.7"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^0.6.2",
