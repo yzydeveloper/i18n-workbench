@@ -1,9 +1,16 @@
 import ExtractorAbstract, { ExtractorOptions, ExtractorResult } from './base'
 import { workspace } from 'vscode'
 import {
-    isText,
-    // isTemplateNode,
     TemplateChildNode,
+    ElementNode,
+    AttributeNode,
+    DirectiveNode,
+    InterpolationNode,
+    SimpleExpressionNode,
+    ExpressionNode,
+    CompoundExpressionNode,
+    TextNode,
+    isText,
     baseParse as parse,
 } from '@vue/compiler-core'
 export class SfcExtractor extends ExtractorAbstract {
@@ -16,7 +23,6 @@ export class SfcExtractor extends ExtractorAbstract {
         ast.children.forEach(node => {
             if (node.type !== 1) // NODETYPES.ELEMENT
                 return
-            console.log(node, 'node')
 
             switch (node.tag) {
                 case 'template':
@@ -28,30 +34,76 @@ export class SfcExtractor extends ExtractorAbstract {
                     break
             }
         })
-        console.log(options, 'options')
-        return {
-            id: 'vue'
-        }
+        return options
+    }
+
+    isVBind(p: ElementNode['props'][0]): p is DirectiveNode {
+        return p.type === 7 && p.name === 'bind'
+    }
+
+    isProp(p: ElementNode['props'][0]): p is AttributeNode {
+        return p.type === 6 && !['class', 'id'].includes(p.name)
+    }
+
+    isInterPolation(p: TemplateChildNode): p is InterpolationNode {
+        return p.type === 5
+    }
+
+    isCompoundExpression(p: ExpressionNode): p is CompoundExpressionNode {
+        return p.type === 8
+    }
+
+    isSimpleExpressionNode(p: ExpressionNode): p is SimpleExpressionNode {
+        return p.type === 4
+    }
+
+    splitTemplateLiteral(content: string): string[] {
+        return content.match(/[\u4E00-\u9FA5]+/g) ?? []
     }
 
     parseTemplateText(templateNode: TemplateChildNode) {
+        const words: string[] = []
+        const visitorAttr = (node: DirectiveNode) => {
+            const exp = node.exp as ExpressionNode
+            if (this.isSimpleExpressionNode(exp)) {
+                const { content } = exp
+                this.splitTemplateLiteral(content).forEach(c => words.push(c))
+            }
+        }
         const visitor = (node: TemplateChildNode) => {
-            // enum {
-            // InterpolationNode = 5
-            // TEXTNODE = 2
-            // COMMENT = 3
-            // ELEMENT = 1
-            // }
-            if (isText(node))
-                console.log(node, 'node>>isText')
+            if (isText(node)) {
+                if (!this.isInterPolation(node)) {
+                    // TODO 考虑文本换行
+                    words.push(node.content)
+                }
+                else {
+                    if (this.isSimpleExpressionNode(node.content)) {
+                        const { content } = node.content
+                        this.splitTemplateLiteral(content).forEach(c => words.push(c))
+                    }
 
+                    // TODO
+                    // if(this.isCompoundExpression(node.content)) {
+                    // }
+                }
+            }
             if (node.type === 1) {
+                node.props.forEach(inlineNode => {
+                    if (this.isVBind(inlineNode))
+                        visitorAttr(inlineNode)
+
+                    if (this.isProp(inlineNode)) {
+                        const { content } = inlineNode.value as TextNode
+                        words.push(content)
+                    }
+                })
+
                 const _node = node.children
                 _node.forEach(visitor)
             }
         }
-
         visitor(templateNode)
+        console.log(words, 'words')
     }
 
     parseJsText() {
