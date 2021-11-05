@@ -13,6 +13,7 @@ import {
     isText,
     baseParse as parse,
 } from '@vue/compiler-core'
+import { parse as _parse } from '@babel/parser'
 export class SfcExtractor extends ExtractorAbstract {
     // public readonly id = 'vue'
 
@@ -29,6 +30,7 @@ export class SfcExtractor extends ExtractorAbstract {
                     this.parseTemplateText(node)
                     break
                 case 'script':
+                    this.parseJsText(node)
                     break
                 default:
                     break
@@ -106,7 +108,10 @@ export class SfcExtractor extends ExtractorAbstract {
         console.log(words, 'words')
     }
 
-    parseJsText() {
+    parseJsText(scriptNode: TemplateChildNode) {
+        if(scriptNode.type !== 1) return []
+        for (let i = 0; i < scriptNode.children.length; i++) {
 
+        }
     }
 }
