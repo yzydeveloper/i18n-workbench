@@ -8,19 +8,37 @@ import {
     InterpolationNode,
     SimpleExpressionNode,
     ExpressionNode,
-    CompoundExpressionNode,
     TextNode,
     isText,
     baseParse as parse,
 } from '@vue/compiler-core'
-import { parse as _parse } from '@babel/parser'
+import { ParserPlugin, parse as babelParse } from '@babel/parser'
+import traverse from '@babel/traverse'
 export class SfcExtractor extends ExtractorAbstract {
     // public readonly id = 'vue'
 
     async extractor(options: ExtractorOptions): Promise<ExtractorResult> {
         const doc = await workspace.openTextDocument(this.uri)
         const texts = doc.getText()
-        const ast = parse(texts)
+        const ast = parse(texts, {
+            getTextMode: ({ tag, props }, parent) => {
+                if (
+                    (!parent && tag !== 'template')
+                    || (tag === 'template'
+                        && props.some(
+                            p =>
+                                p.type === 6
+                                && p.name === 'lang'
+                                && p.value
+                                && p.value.content
+                                && p.value.content !== 'html'
+                        ))
+                )
+                    return 2
+                else
+                    return 0
+            },
+        })
         ast.children.forEach(node => {
             if (node.type !== 1) // NODETYPES.ELEMENT
                 return
@@ -51,16 +69,12 @@ export class SfcExtractor extends ExtractorAbstract {
         return p.type === 5
     }
 
-    isCompoundExpression(p: ExpressionNode): p is CompoundExpressionNode {
-        return p.type === 8
-    }
-
     isSimpleExpressionNode(p: ExpressionNode): p is SimpleExpressionNode {
         return p.type === 4
     }
 
     splitTemplateLiteral(content: string): string[] {
-        return content.match(/[\u4E00-\u9FA5]+/g) ?? []
+        return content.match(/[\u4E00-\u9FA5]+/gm) ?? []
     }
 
     parseTemplateText(templateNode: TemplateChildNode) {
@@ -75,13 +89,14 @@ export class SfcExtractor extends ExtractorAbstract {
         const visitor = (node: TemplateChildNode) => {
             if (isText(node)) {
                 if (!this.isInterPolation(node)) {
-                    // TODO 考虑文本换行
-                    words.push(node.content)
+                    this.splitTemplateLiteral(node.content).forEach(t => {
+                        words.push(t)
+                    })
                 }
                 else {
                     if (this.isSimpleExpressionNode(node.content)) {
                         const { content } = node.content
-                        this.splitTemplateLiteral(content).forEach(c => words.push(c))
+                        this.splitTemplateLiteral(content).forEach(t => words.push(t))
                     }
 
                     // TODO
@@ -105,13 +120,49 @@ export class SfcExtractor extends ExtractorAbstract {
             }
         }
         visitor(templateNode)
-        console.log(words, 'words')
+        return words
     }
 
     parseJsText(scriptNode: TemplateChildNode) {
-        if(scriptNode.type !== 1) return []
-        for (let i = 0; i < scriptNode.children.length; i++) {
+        if (scriptNode.type !== 1) return []
 
+        const words: string[] = []
+        const plugins: ParserPlugin[] = []
+        scriptNode.props.forEach(p => {
+            if (p.type === 6) {
+                if (p.name === 'lang') {
+                    const lang = (p.value && p.value.content) ?? ''
+                    const isTs = ['ts', 'tsx'].includes(lang)
+                    if (lang === 'tsx')
+                        plugins.push('jsx')
+
+                    if (isTs)
+                        plugins.push('typescript', 'decorators-legacy')
+                }
+            }
+        })
+
+        for (let i = 0; i < scriptNode.children.length; i++) {
+            const { source } = scriptNode.children[i].loc
+            const ast = babelParse(source, {
+                plugins,
+                sourceType: 'module'
+            })
+            traverse(ast, {
+                StringLiteral(path) {
+                    const { value } = path.node
+                    words.push(value)
+                },
+                TemplateLiteral: (path) => {
+                    const value = path.get('quasis').map(item => item.node.value.raw)
+                    value.forEach(v => {
+                        this.splitTemplateLiteral(v).forEach(t => {
+                            words.push(t)
+                        })
+                    })
+                }
+            })
         }
+        return words
     }
 }
