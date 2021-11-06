@@ -32,7 +32,8 @@
 		"@babel/types": "^7.15.6",
 		"@vue/compiler-core": "^3.2.20",
 		"axios": "^0.23.0",
-		"fast-glob": "^3.2.7"
+		"fast-glob": "^3.2.7",
+		"vue": "^2.6.14"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^0.6.2",
