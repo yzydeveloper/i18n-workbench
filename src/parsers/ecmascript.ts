@@ -27,7 +27,6 @@ export class EcmascriptParser {
         const ast = parse(texts, {
             sourceType: 'module'
         })
-        console.log(ast, 'ast')
 
         traverse(ast, {
             ExportDefaultDeclaration(path: NodePath<{ declaration: any }>) {
