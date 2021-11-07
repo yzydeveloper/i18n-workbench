@@ -1,29 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-    </head>
-    <div id="workbench">
-        {{num}}
-        <button @click="num++">+++</button>
-    </div>
-    <body>
-        <script type="module">
-            import { createApp, ref } from 'https://cdn.jsdelivr.net/npm/vue@3.2.21/dist/vue.esm-browser.js'
-            const vscode = window.acquireVsCodeApi()
-            createApp({
-              setup() {
-                const num = ref(0)
-                window.addEventListener('message', () => {
-                })
-                return {
-                  num,
-                }
-              },
-            }).mount('#workbench')
-        </script>
-    </body>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+  <div id="workbench">
+    <button @click="create">postMessage</button>
+  </div>
+  <body>
+    <script type="module">
+      import { createApp, ref } from 'https://cdn.jsdelivr.net/npm/vue@3.2.21/dist/vue.esm-browser.js'
+      const vscode = window.acquireVsCodeApi()
+      createApp({
+        setup() {
+          const num = ref(0)
+          window.addEventListener('message', ({ data: event }) => {
+            const { type, data } = event
+            console.log(type, 'type')
+            console.log(data, 'data')
+          })
+          return {
+            num,
+            create: () => {
+              vscode.postMessage({
+                type: 'create',
+              })
+            },
+          }
+        },
+      }).mount('#workbench')
+    </script>
+  </body>
 </html>

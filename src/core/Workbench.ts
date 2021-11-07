@@ -2,10 +2,23 @@ import type { WebviewPanel } from 'vscode'
 import { join } from 'path'
 import { readFileSync } from 'fs'
 import Config from './Config'
-import { window, ViewColumn, Uri } from 'vscode'
+import { window, ViewColumn, Uri, Disposable } from 'vscode'
+export interface Message {
+    type: string
+    data?: any
+}
 export class Workbench {
     public static workbench: Workbench | undefined
     private readonly panel: WebviewPanel
+    private disposables: Disposable[] = []
+
+    private handleMessages(message: Message) {
+        switch (message.type) {
+            case 'create':
+
+                break
+        }
+    }
 
     private constructor() {
         this.panel = window.createWebviewPanel(
@@ -24,9 +37,9 @@ export class Workbench {
             'utf-8',
         )
 
-        this.panel.onDidDispose(() => {
-            this.dispose()
-        })
+        this.panel.webview.onDidReceiveMessage((message) => this.handleMessages(message), null, this.disposables)
+
+        this.panel.onDidDispose(() => this.dispose(), null, this.disposables)
     }
 
     static createWorkbench() {
@@ -43,6 +56,8 @@ export class Workbench {
 
     public dispose() {
         Workbench.workbench = undefined
+
+        Disposable.from(...this.disposables).dispose()
 
         this.panel.dispose()
     }
