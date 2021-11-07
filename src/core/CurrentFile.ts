@@ -27,7 +27,6 @@ export class CurrentFile {
     }
 
     /**
-     * 依靠@vue/compiler-sfc解析template和script代码块
      * @param currentEditor
      */
     static async retrieveSourceLanguage() {

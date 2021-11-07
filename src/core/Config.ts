@@ -1,11 +1,16 @@
 import type { ConfigurationScope, WorkspaceFolder } from 'vscode'
-import { workspace } from 'vscode'
+import { workspace, ExtensionContext } from 'vscode'
 import { EXT_NAMESPACE } from './../meta'
 export default class Config {
     static extName: string
+    static ctx: ExtensionContext
 
     static get extensionName() {
         return this.extName || EXT_NAMESPACE
+    }
+
+    static get extensionPath() {
+        return this.ctx.extension.extensionPath
     }
 
     static get localesPath(): string {

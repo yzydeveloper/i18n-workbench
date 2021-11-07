@@ -11,6 +11,7 @@ import ConfigLocaleCommand from '~/commands/configLocalePaths'
 
 export function activate(context: ExtensionContext) {
     Log.info(`🌞 ${Config.extensionName} Activated`)
+    Config.ctx = context
     Global.init(context)
     CurrentFile.watch(context)
 
