@@ -12,7 +12,7 @@ export type LocalesPath = string
 
 export type PuidType = string
 
-export type DirStructure = 'file' | 'dir'
+export type DirStructure = 'file' | 'dir' | ''
 
 export interface ExtensionModule {
     (ctx: ExtensionContext): Disposable | Disposable[]

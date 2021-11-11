@@ -1,13 +1,17 @@
 import type { WebviewPanel } from 'vscode'
 import { join } from 'path'
-import { readFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import Config from './Config'
 import { window, ViewColumn, Uri, Disposable, workspace } from 'vscode'
-import {
-    parse
-    , parseExpression
-} from '@babel/parser'
+import { parse, parseExpression } from '@babel/parser'
 import traverse from '@babel/traverse'
+import generate from '@babel/generator'
+import {
+    isObjectProperty,
+    isIdentifier,
+    isExportDefaultDeclaration,
+    // objectExpression
+} from '@babel/types'
 import { Global } from '.'
 export interface Message {
     type: string
@@ -63,21 +67,52 @@ export class Workbench {
                 SHIELDED: '已屏蔽',
                 LIFTED: '已解除',
             },
+            test:"测试"
         }`
-        const { files } = Global.loader
+        const { files, localeFileMap } = Global.loader
         console.log(files, 'loader')
         const filePath = files[2]
+        console.log(localeFileMap['zh-cn'][filePath], 'data')
         const document = await workspace.openTextDocument(filePath)
         const texts = await document.getText()
         const sourceAst = parse(texts, {
             sourceType: 'module'
         })
+        console.log(sourceAst, 'sourceAst')
+        const tempKey = ['warningStates']
         traverse(sourceAst, {
-            ObjectProperty(path: any) {
-                console.log(path, 'path>>>sourceAst<<<')
+            Program: {
+                enter(path) {
+                    path.traverse({
+                        ObjectExpression(p) {
+                            if (isExportDefaultDeclaration(p.parent)) {
+                                const { properties } = p.node
+                                properties.forEach(propertie => {
+                                    if (isObjectProperty(propertie)) {
+                                        if (isIdentifier(propertie.key)) {
+                                            const key = propertie.key.name
+                                            if (tempKey.includes(key))
+                                                propertie.value = parseExpression(mock)
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
             }
         })
-        console.log(parseExpression(mock), '>>>ast<<<')
+        const { code } = generate(sourceAst, {
+            retainLines: false,
+            compact: 'auto',
+            concise: false,
+            jsescOption: {
+                quotes: 'single',
+                minimal: true
+            }
+        }, texts)
+        writeFileSync(filePath, code)
+        console.log(parseExpression(mock), 'mock')
     }
 
     public supplyWords() {

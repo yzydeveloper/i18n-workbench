@@ -1,4 +1,4 @@
-import type { ParsedFile } from '..'
+import type { ParsedFile, DirStructure } from '..'
 import { resolve, extname } from 'path'
 import fg from 'fast-glob'
 import { Loader } from './Loader'
@@ -8,6 +8,8 @@ import Config from '../Config'
 export class LocaleLoader extends Loader {
     private _files: Record<string, ParsedFile> = {}
     private _path_matcher!: RegExp
+    private _locale_file_map: Record<string, any> = {}
+    private _dir_structure: DirStructure = ''
     constructor(public readonly rootPath: string) {
         super(`[LOCALE]${rootPath}`)
     }
@@ -33,19 +35,35 @@ export class LocaleLoader extends Loader {
             cwd: this.localesDir,
         })
         let regex = ''
-        if (dirnames.length)
-            // dir
+        if (dirnames.length) {
+            this._dir_structure = 'dir'
             regex = '^(?<locale>[\\w-_]+)(?:.*/|^).*\\.(js|ts|json)$'
-
-        else
-            // file
+        }
+        else {
+            this._dir_structure = 'file'
             regex = '^(?<locale>[\\w-_]+)\.(js|ts|json)$'
-
+        }
         this._path_matcher = new RegExp(regex)
     }
 
+    // 所有文件路径
     get files() {
         return Object.keys(this._files)
+    }
+
+    // 目录结构 dir | file
+    get dirStructure() {
+        return this._dir_structure
+    }
+
+    // 所有语言
+    get allLocales() {
+        return Object.keys(this._locale_file_map)
+    }
+
+    // 语言文件映射
+    get localeFileMap() {
+        return this._locale_file_map
     }
 
     private async loadDirectory(searchingPath: string) {
@@ -87,12 +105,15 @@ export class LocaleLoader extends Loader {
             const { locale, filePath, parser } = result
             if (!locale || !parser) return
             const value = await parser.load(filePath)
-            this._files[filePath] = {
+            const data = {
                 filePath,
                 dirPath,
                 locale,
                 value,
             }
+            this._files[filePath] = data
+            !this._locale_file_map[locale] && (this._locale_file_map[locale] = {})
+            this._locale_file_map[locale][filePath] = data
         }
         catch (e) {
             console.log(e)
