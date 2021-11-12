@@ -22,11 +22,27 @@ export class Workbench {
     private readonly panel: WebviewPanel
     private disposables: Disposable[] = []
 
+    private get config() {
+        const { loader } = Global
+        const { allLocales, localeFileLanguage, dirStructure } = loader
+        return {
+            allLocales,
+            localeFileLanguage,
+            dirStructure
+        }
+    }
+
     private handleMessages(message: Message) {
         const { type } = message
         switch (type) {
-            case 'create':
-                this.create()
+            case 'ready':
+                this.panel.webview.postMessage({
+                    type: 'config',
+                    data: this.config
+                })
+                break
+            case 'write':
+                console.log('写入')
                 break
         }
     }
@@ -69,10 +85,10 @@ export class Workbench {
             },
             test:"测试"
         }`
-        const { files, localeFileMap } = Global.loader
+        const { files, localeFileLanguage } = Global.loader
         console.log(files, 'loader')
         const filePath = files[2]
-        console.log(localeFileMap['zh-cn'][filePath], 'data')
+        console.log(localeFileLanguage['zh-cn'][filePath], 'data')
         const document = await workspace.openTextDocument(filePath)
         const texts = await document.getText()
         const sourceAst = parse(texts, {
@@ -113,12 +129,6 @@ export class Workbench {
         }, texts)
         writeFileSync(filePath, code)
         console.log(parseExpression(mock), 'mock')
-    }
-
-    public supplyWords() {
-        this.panel.webview.postMessage({
-            type: 'words'
-        })
     }
 
     public dispose() {

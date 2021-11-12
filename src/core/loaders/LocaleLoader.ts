@@ -8,7 +8,7 @@ import Config from '../Config'
 export class LocaleLoader extends Loader {
     private _files: Record<string, ParsedFile> = {}
     private _path_matcher!: RegExp
-    private _locale_file_map: Record<string, any> = {}
+    private _locale_file_language: Record<string, any> = {}
     private _dir_structure: DirStructure = ''
     constructor(public readonly rootPath: string) {
         super(`[LOCALE]${rootPath}`)
@@ -58,12 +58,12 @@ export class LocaleLoader extends Loader {
 
     // 所有语言
     get allLocales() {
-        return Object.keys(this._locale_file_map)
+        return Object.keys(this._locale_file_language)
     }
 
-    // 语言文件映射
-    get localeFileMap() {
-        return this._locale_file_map
+    // 语言文件数据映射
+    get localeFileLanguage() {
+        return this._locale_file_language
     }
 
     private async loadDirectory(searchingPath: string) {
@@ -112,8 +112,8 @@ export class LocaleLoader extends Loader {
                 value,
             }
             this._files[filePath] = data
-            !this._locale_file_map[locale] && (this._locale_file_map[locale] = {})
-            this._locale_file_map[locale][filePath] = data
+            !this._locale_file_language[locale] && (this._locale_file_language[locale] = {})
+            this._locale_file_language[locale][filePath] = data
         }
         catch (e) {
             console.log(e)

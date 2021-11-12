@@ -5,8 +5,7 @@ import { CurrentFile } from '~/core'
 import { Workbench } from '~/core/Workbench'
 export function extractToFile() {
     CurrentFile.retrieveSourceLanguage()
-    const workbench = Workbench.createWorkbench()
-    workbench?.supplyWords()
+    Workbench.createWorkbench()
 }
 
 const m: ExtensionModule = () => {

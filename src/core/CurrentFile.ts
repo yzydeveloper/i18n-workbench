@@ -1,10 +1,12 @@
 import type { ExtensionContext, Uri } from 'vscode'
+import type { ExtractorResult } from '~/extractor/base'
 import { extname } from 'path'
 import { workspace, window } from 'vscode'
 import { Extractor } from '~/extractor'
 export class CurrentFile {
     static uri: Uri | undefined
     static _extractor: Extractor | null = null
+    static _source: ExtractorResult
     static watch(ctx: ExtensionContext) {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
         ctx.subscriptions.push(workspace.onDidChangeTextDocument(e => {
@@ -34,7 +36,11 @@ export class CurrentFile {
             const result = await this._extractor.extract({
                 id: this.id
             })
-            console.log(result, 'result')
+            this._source = result
         }
+    }
+
+    static write() {
+
     }
 }

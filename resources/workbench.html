@@ -8,6 +8,7 @@
   </head>
   <div id="workbench">
     <button @click="create">postMessage</button>
+    <div>{{JSON.stringify(store)}}</div>
   </div>
   <body>
     <script type="module">
@@ -16,21 +17,31 @@
       createApp({
         setup() {
           const num = ref(0)
-          window.addEventListener('message', ({ data: event }) => {
-            const { type, data } = event
-            console.log(type, 'type')
-            console.log(data, 'data')
+          const store = ref({})
+          window.addEventListener('message', (event) => {
+            const message = event.data
+            switch (message.type) {
+              case 'config':
+                store.value.config = message.data
+                break
+
+              default:
+                break
+            }
           })
           return {
             num,
+            store,
             create: () => {
-              vscode.postMessage({
-                type: 'create',
-              })
+
+            },
+            write: () => {
+
             },
           }
         },
       }).mount('#workbench')
+      vscode.postMessage({ type: 'ready' })
     </script>
   </body>
 </html>

@@ -14,12 +14,16 @@ import {
 } from '@vue/compiler-core'
 import { ParserPlugin, parse as babelParse } from '@babel/parser'
 import traverse from '@babel/traverse'
+
 export class SfcExtractor extends ExtractorAbstract {
     // public readonly id = 'vue'
 
     async extractor(options: ExtractorOptions): Promise<ExtractorResult> {
         const doc = await workspace.openTextDocument(this.uri)
         const texts = doc.getText()
+        const result: ExtractorResult = {
+            id: options.id
+        }
         const ast = parse(texts, {
             getTextMode: ({ tag, props }, parent) => {
                 if (
@@ -45,16 +49,16 @@ export class SfcExtractor extends ExtractorAbstract {
 
             switch (node.tag) {
                 case 'template':
-                    this.parseTemplateText(node)
+                    result.template = this.createExtractorResult(node)
                     break
                 case 'script':
-                    this.parseJsText(node)
+                    result.script = this.createExtractorResult(node)
                     break
                 default:
                     break
             }
         })
-        return options
+        return result
     }
 
     isVBind(p: ElementNode['props'][0]): p is DirectiveNode {
@@ -77,7 +81,7 @@ export class SfcExtractor extends ExtractorAbstract {
         return content.match(/[\u4E00-\u9FA5]+/gm) ?? []
     }
 
-    parseTemplateText(templateNode: TemplateChildNode) {
+    parseTemplateText(templateNode: TemplateChildNode): string[] {
         const words: string[] = []
         const visitorAttr = (node: DirectiveNode) => {
             const exp = node.exp as ExpressionNode
@@ -120,10 +124,10 @@ export class SfcExtractor extends ExtractorAbstract {
             }
         }
         visitor(templateNode)
-        return words
+        return words.filter(word => word)
     }
 
-    parseJsText(scriptNode: TemplateChildNode) {
+    parseJsText(scriptNode: TemplateChildNode): string[] {
         if (scriptNode.type !== 1) return []
 
         const words: string[] = []
@@ -163,6 +167,25 @@ export class SfcExtractor extends ExtractorAbstract {
                 }
             })
         }
-        return words
+        return words.filter(word => word)
+    }
+
+    createExtractorResult(node: ElementNode) {
+        const { tag, loc } = node
+        const { start, end } = loc
+        if (tag === 'template') {
+            return {
+                content: this.parseTemplateText(node),
+                start,
+                end
+            }
+        }
+        if (tag === 'script') {
+            return {
+                content: this.parseJsText(node),
+                start,
+                end
+            }
+        }
     }
 }
