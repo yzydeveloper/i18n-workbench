@@ -66,6 +66,12 @@
         box-shadow: none;
       }
 
+      .save-button {
+        margin-top: 16px;
+        padding: 1.4em 1.8em;
+        font-size: 0.9em;
+      }
+
       .workbench-content-editor {
         margin-top: 16px;
         padding: 8px 16px;
@@ -127,103 +133,119 @@
 
     </style>
   </head>
-  <div id="workbench">
-    <div class="workbench-content">
-      <div v-for="(pending,index) in pendingData" :key="index" class="workbench-content-editor">
-        <div class="editor-header">
-        </div>
-        <div class="editor-title">
-          <span>Key：</span>
-          <input v-model="pending.key" class="input">
-          <div class="buttons">
-            <div class="button" @click="translate(pending,index)">翻译</div>
+  <body>
+    <div id="workbench">
+      <div class="workbench-content">
+        <div class="workbench-content-header">
+          <div class="button save-button" @click="save">
+            保存到文件
           </div>
         </div>
-        <div class="editor-core" v-for="locale in allLocales">
-          <div class="editor-core-translate">{{ locale }}</div>
-          <div class="editor-core-content">
-            <input class="input" v-model="pending.value[locale]">
+        <div v-for="(pending,index) in pendingData" :key="index" class="workbench-content-editor">
+          <div class="editor-header">
           </div>
-          <div class="editor-core-path" v-if="dirStructure==='dir'">
-            <select :title="pending.insertPath" class="select" v-model="pending.insertPath">
-              <option class="option" :value="path" v-for="path in pathMapping[locale]" :key="path">{{ path }}</option>
-            </select>
+          <div class="editor-title">
+            <span>Key：</span>
+            <input v-model="pending.key" class="input">
+            <div class="buttons">
+              <div class="button" @click="translate(pending,index)">翻译</div>
+            </div>
+          </div>
+          <div class="editor-core" v-for="locale in allLocales">
+            <div class="editor-core-translate">{{ locale }}</div>
+            <div class="editor-core-content">
+              <input class="input" v-model="pending.value[locale]">
+            </div>
+            <div class="editor-core-path" v-if="dirStructure==='dir'">
+              <select :title="pending.insertPath[locale]" class="select" v-model="pending.insertPath[locale]">
+                <option class="option" :value="path" v-for="path in pathMapping[locale]" :key="path">{{ path }}</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <body>
-    <script type="module">
-      import { createApp, ref, computed } from 'https://cdn.jsdelivr.net/npm/vue@3.2.21/dist/vue.esm-browser.js'
-      const vscode = window.acquireVsCodeApi()
-      const _events = {
-        CONFIG: 0, // 获取配置
-        UPDATE_SINGLE: 1, // 更新单条
-      }
-      createApp({
-        setup() {
-          const config = ref({})
-          const updateSignal = (data) => {
-            const { value, index } = data
-            config.value.pending[index].value = value
-          }
-
-          // 所有的语言环境
-          const allLocales = computed(() => config.value.allLocales)
-          // 翻译的依据语言环境
-          const sourceLanguage = computed(() => config.value.sourceLanguage)
-          // 目录结构 dir | file
-          const dirStructure = computed(() => config.value.dirStructure)
-          // 工作台的列表数据
-          const pendingData = computed(() => config.value.pending)
-          // 语言环境对应的文件
-          const pathMapping = computed(() => {
-            const { localeFileLanguage } = config.value
-            return Object.keys(localeFileLanguage).reduce((_, info) => {
-              _[info] = Object.keys(localeFileLanguage[info])
-              return _
-            }, {})
-          })
-
-          window.addEventListener('message', (event) => {
-            const message = event.data
-            switch (message.type) {
-              case _events.CONFIG:
-                config.value = message.data
-                break
-              case _events.UPDATE_SINGLE:
-                updateSignal(message.data)
-                break
-              default:
-                break
-            }
-          })
-          return {
-            config,
-            allLocales,
-            sourceLanguage,
-            dirStructure,
-            pendingData,
-            pathMapping,
-            create: () => {
-
-            },
-            translate: (pending, index) => {
-              const text = pending.value[sourceLanguage.value]
-              vscode.postMessage({
-                type: 'translate',
-                data: {
-                  index,
-                  text,
-                },
-              })
-            },
-
-          }
-        },
-      }).mount('#workbench')
-      vscode.postMessage({ type: 'ready' })
-    </script>
   </body>
+  <script type="module">
+    import { createApp, ref, computed } from 'https://cdn.jsdelivr.net/npm/vue@3.2.21/dist/vue.esm-browser.js'
+    const vscode = window.acquireVsCodeApi()
+    const _events = {
+      READY: 0,
+      CONFIG: 1, // 获取配置
+      UPDATE_SINGLE: 2, // 更新单条
+      SAVE: 3,
+    }
+    createApp({
+      setup() {
+        const config = ref({})
+        // 所有的语言环境
+        const allLocales = computed(() => config.value.allLocales)
+        // 翻译的依据语言环境
+        const sourceLanguage = computed(() => config.value.sourceLanguage)
+        // 目录结构 dir | file
+        const dirStructure = computed(() => config.value.dirStructure)
+        // 工作台的列表数据
+        const pendingData = computed(() => config.value.pending)
+        // 语言环境对应的文件
+        const pathMapping = computed(() => {
+          const { localeFileLanguage } = config.value
+          return Object.keys(localeFileLanguage).reduce((_, info) => {
+            _[info] = Object.keys(localeFileLanguage[info])
+            return _
+          }, {})
+        })
+
+        // 更新单个数据
+        const updateSignal = (data) => {
+          const { value, index } = data
+          config.value.pending[index].value = value
+        }
+        // 保存到文件
+        const save = () => {
+          vscode.postMessage({
+            type: _events.SAVE,
+            data: JSON.stringify(pendingData.value),
+          })
+        }
+        // 翻译
+        const translate = (pending, index) => {
+          const text = pending.value[sourceLanguage.value]
+          vscode.postMessage({
+            type: _events.UPDATE_SINGLE,
+            data: {
+              index,
+              text,
+            },
+          })
+        }
+
+        window.addEventListener('message', (event) => {
+          const message = event.data
+          switch (message.type) {
+            case _events.CONFIG:
+              config.value = message.data
+              break
+            case _events.UPDATE_SINGLE:
+              updateSignal(message.data)
+              break
+            default:
+              break
+          }
+        })
+        return {
+          config,
+          allLocales,
+          sourceLanguage,
+          dirStructure,
+          pendingData,
+          pathMapping,
+          save,
+          translate,
+
+        }
+      },
+    }).mount('#workbench')
+
+    vscode.postMessage({ type: _events.READY })
+  </script>
 </html>

@@ -11,12 +11,14 @@ import generate from '@babel/generator'
 import Config from './Config'
 
 export interface Message {
-    type: string
+    type: string | number
     data?: any
 }
 enum EventTypes {
+    READY,
     CONFIG,
-    UPDATE_SINGLE
+    UPDATE_SINGLE,
+    SAVE
 }
 export class Workbench {
     public static workbench: Workbench | undefined
@@ -39,18 +41,17 @@ export class Workbench {
     private handleMessages(message: Message) {
         const { type, data } = message
         switch (type) {
-            case 'ready':
+            case EventTypes.READY:
                 this.panel.webview.postMessage({
                     type: EventTypes.CONFIG,
                     data: this.config
                 })
 
                 break
-            case 'write':
-                console.log('写入')
-                this.create()
+            case EventTypes.SAVE:
+                this.saveToFile(data)
                 break
-            case 'translate':
+            case EventTypes.UPDATE_SINGLE:
                 this.translateSignal(data)
                 break
         }
@@ -84,8 +85,11 @@ export class Workbench {
         return Workbench.workbench
     }
 
-    // TODO test
-    public async create() {
+    // 保存到文件
+    public async saveToFile(data: Message['data']) {
+        const pendingData = JSON.parse(data)
+        console.log(pendingData, '哈哈')
+        return
         const mock = `{
             filesView: {
                 IN_WARNING: '告警中',
@@ -140,6 +144,7 @@ export class Workbench {
         console.log(parseExpression(mock), 'mock')
     }
 
+    // 更新单条
     public async translateSignal(data: Message['data']) {
         const { text, index } = data
         const r = await CurrentFile.translateSingle(text)

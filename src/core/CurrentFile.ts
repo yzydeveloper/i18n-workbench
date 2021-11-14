@@ -57,7 +57,7 @@ export class CurrentFile {
 
             result.push({
                 key: '',
-                insertPath: '',
+                insertPath: {},
                 value
             })
 

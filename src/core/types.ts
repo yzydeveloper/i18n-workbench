@@ -25,6 +25,6 @@ export interface ParsedFile {
 
 export interface PendingData {
     key: string
-    insertPath: string
+    insertPath: string | object // 写入的文件，对应语言环境或者语言类型
     value: object
 }
