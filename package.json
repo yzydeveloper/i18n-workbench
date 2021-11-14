@@ -115,28 +115,12 @@
 					"type": "string",
 					"description": "翻译文件的目录（相对于项目根目录）"
 				},
-				"hero-i18n.langFile": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					},
-					"default": [
-						"zh-CN",
-						"en-US"
-					],
-					"description": "指定国际化JSON文件名称,且支持的国际化"
-				},
-				"hero-i18n.puidType": {
-					"type": "string",
-					"default": "short",
-					"description": "国际化key的唯一类型"
-				},
-				"hero-i18n.translate.libre.apiRoot": {
+				"hero-i18n.translate-apiRoot": {
 					"type": "string",
 					"default": "http://localhost:5000",
 					"description": ""
 				},
-				"hero-i18n.translate.engines": {
+				"hero-i18n.translate-engines": {
 					"type": "array",
 					"items": {
 						"type": "string",

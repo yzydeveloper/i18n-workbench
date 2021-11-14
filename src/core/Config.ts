@@ -21,20 +21,17 @@ export default class Config {
         return this.getConfig('localesPath', scope)
     }
 
-    static get langFile(): string[] {
-        return this.getConfig<string[]>('langFile') ?? []
-    }
-
-    static get puidType(): string {
-        return this.getConfig<string>('puidType') ?? ''
-    }
-
-    static get libreTranslateApiRoot(): string {
-        return this.getConfig<string>('translate.libre.apiRoot') ?? ''
+    static get translateApiRoot(): string {
+        return this.getConfig<string>('translate-apiRoot') ?? ''
     }
 
     static get translateEngines(): string[] {
-        return this.getConfig<string[]>('translate.engines') || ['google']
+        const engines = this.getConfig<string[]>('translate-engines')
+        return engines && engines.length ? engines : ['google']
+    }
+
+    static get sourceLanguage(): string {
+        return this.getConfig<string>('sourceLanguage') ?? 'zh-CN'
     }
 
     static get namespace(): boolean | undefined {

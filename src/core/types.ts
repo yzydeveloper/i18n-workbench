@@ -10,44 +10,10 @@ export type Readonly<T> = {
 
 export type LocalesPath = string
 
-export type PuidType = string
-
 export type DirStructure = 'file' | 'dir' | ''
 
 export interface ExtensionModule {
     (ctx: ExtensionContext): Disposable | Disposable[]
-}
-export interface DefaultConfig {
-    localesPath: LocalesPath
-    langFile: string[]
-    hover: boolean
-    puidType: string
-}
-
-export interface ReadSetting {
-    fsPath: string
-    key: string[] | string
-    specific?: boolean
-    ignoreCustom?: boolean
-}
-
-export interface ReadLocalesInfo {
-    fsPath: string
-    defaultLocalesPath: string
-    isGetRootPath?: boolean
-    showInfo?: boolean
-    showError?: boolean
-}
-
-export interface VarifyFile {
-    fsPath: string[]
-    showInfo?: boolean
-    showError?: boolean
-}
-
-export interface ReturnReadLocalesInfo {
-    localesPath: LocalesPath
-    exist: boolean
 }
 
 export interface ParsedFile {
@@ -55,4 +21,10 @@ export interface ParsedFile {
     dirPath: string
     locale: string
     value: string
+}
+
+export interface PendingData {
+    key: string
+    insertPath: string
+    value: object
 }

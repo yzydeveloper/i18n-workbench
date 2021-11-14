@@ -1,21 +1,22 @@
 import type { WebviewPanel } from 'vscode'
 import { join } from 'path'
 import { readFileSync, writeFileSync } from 'fs'
-import Config from './Config'
 import { window, ViewColumn, Uri, Disposable, workspace } from 'vscode'
+import { findLanguage } from '~/utils'
+import { Global, CurrentFile } from '.'
+import { isObjectProperty, isIdentifier, isExportDefaultDeclaration } from '@babel/types'
 import { parse, parseExpression } from '@babel/parser'
 import traverse from '@babel/traverse'
 import generate from '@babel/generator'
-import {
-    isObjectProperty,
-    isIdentifier,
-    isExportDefaultDeclaration,
-    // objectExpression
-} from '@babel/types'
-import { Global } from '.'
+import Config from './Config'
+
 export interface Message {
     type: string
     data?: any
+}
+enum EventTypes {
+    CONFIG,
+    UPDATE_SINGLE
 }
 export class Workbench {
     public static workbench: Workbench | undefined
@@ -25,24 +26,32 @@ export class Workbench {
     private get config() {
         const { loader } = Global
         const { allLocales, localeFileLanguage, dirStructure } = loader
+        const { pending } = CurrentFile
         return {
             allLocales,
+            sourceLanguage: findLanguage(Config.sourceLanguage),
+            dirStructure,
             localeFileLanguage,
-            dirStructure
+            pending
         }
     }
 
     private handleMessages(message: Message) {
-        const { type } = message
+        const { type, data } = message
         switch (type) {
             case 'ready':
                 this.panel.webview.postMessage({
-                    type: 'config',
+                    type: EventTypes.CONFIG,
                     data: this.config
                 })
+
                 break
             case 'write':
                 console.log('写入')
+                this.create()
+                break
+            case 'translate':
+                this.translateSignal(data)
                 break
         }
     }
@@ -78,7 +87,7 @@ export class Workbench {
     // TODO test
     public async create() {
         const mock = `{
-            warningStates: {
+            filesView: {
                 IN_WARNING: '告警中',
                 SHIELDED: '已屏蔽',
                 LIFTED: '已解除',
@@ -129,6 +138,18 @@ export class Workbench {
         }, texts)
         writeFileSync(filePath, code)
         console.log(parseExpression(mock), 'mock')
+    }
+
+    public async translateSignal(data: Message['data']) {
+        const { text, index } = data
+        const r = await CurrentFile.translateSingle(text)
+        this.panel.webview.postMessage({
+            type: EventTypes.UPDATE_SINGLE,
+            data: {
+                index,
+                value: r
+            }
+        })
     }
 
     public dispose() {

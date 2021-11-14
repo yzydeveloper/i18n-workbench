@@ -2,7 +2,7 @@ import type { ParsedFile, DirStructure } from '..'
 import { resolve, extname } from 'path'
 import fg from 'fast-glob'
 import { Loader } from './Loader'
-import { Log } from '~/utils/Log'
+import { Log, findLanguage } from '~/utils'
 import { Global } from '..'
 import Config from '../Config'
 export class LocaleLoader extends Loader {
@@ -92,7 +92,8 @@ export class LocaleLoader extends Loader {
             return
         const parser = Global.getMatchedParser(ext)
         return {
-            locale,
+            originLocale: locale,
+            locale: findLanguage(locale),
             filePath: fullpath,
             parser,
         }
@@ -102,13 +103,14 @@ export class LocaleLoader extends Loader {
         try {
             const result = this.getFileInfo(dirPath, relativePath)
             if (!result) return
-            const { locale, filePath, parser } = result
+            const { originLocale, locale, filePath, parser } = result
             if (!locale || !parser) return
             const value = await parser.load(filePath)
             const data = {
+                originLocale,
+                locale,
                 filePath,
                 dirPath,
-                locale,
                 value,
             }
             this._files[filePath] = data

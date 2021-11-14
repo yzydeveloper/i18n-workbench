@@ -1,5 +1,6 @@
 import type { TranslateResult } from '~/translators'
 import { Translator as TranslatorEngine } from '~/translators'
+import { Log } from '~/utils'
 import Config from './Config'
 
 export class Translator {
@@ -33,5 +34,36 @@ export class Translator {
             throw errors[0]
 
         return result
+    }
+
+    static translate(from: string, text: string, langs: string[]) {
+        const sourceLanguage = Config.sourceLanguage
+
+        const tasks = langs.map(lang => {
+            if (sourceLanguage === lang)
+                return Promise.resolve({ lang, text })
+
+            return this.translateText(text, from, lang).then((result) => {
+                return {
+                    lang,
+                    text: result
+                }
+            }).catch(() => {
+                Log.warn('NetWork Error')
+
+                return {
+                    lang,
+                    text: ''
+                }
+            })
+        })
+
+        return Promise.all(tasks).then(data => {
+            return data.reduce((_, item) => {
+                const { lang, text } = item
+                _[lang] = text
+                return _
+            }, {} as { [key: string]: string })
+        })
     }
 }
