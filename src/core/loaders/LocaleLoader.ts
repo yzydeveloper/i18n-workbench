@@ -1,6 +1,7 @@
 import type { ParsedFile, DirStructure } from '..'
 import { resolve, extname } from 'path'
 import fg from 'fast-glob'
+import { flatten } from 'flat'
 import { Loader } from './Loader'
 import { Log, findLanguage } from '~/utils'
 import { Global } from '..'
@@ -106,12 +107,14 @@ export class LocaleLoader extends Loader {
             const { originLocale, locale, filePath, parser } = result
             if (!locale || !parser) return
             const value = await parser.load(filePath)
+            const flattenValue = flatten(value)
             const data = {
                 originLocale,
                 locale,
                 filePath,
                 dirPath,
                 value,
+                flattenValue
             }
             this._files[filePath] = data
             !this._locale_file_language[locale] && (this._locale_file_language[locale] = {})
