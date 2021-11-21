@@ -8,7 +8,9 @@ export function extractToFile() {
 }
 
 const m: ExtensionModule = () => {
-    return commands.registerCommand(Commands.extract, extractToFile)
+    return commands.registerCommand('hero-i18n.extract', () => {
+        Log.error('？？？？？？？？？？？？？？？？？？？？？？？？？？')
+    })
 }
 
 export default m
