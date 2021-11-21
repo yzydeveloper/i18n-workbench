@@ -3,7 +3,7 @@
 	"name": "hero-i18n",
 	"displayName": "Hero i18n",
 	"description": "This is a hero",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.60.0"
@@ -18,13 +18,19 @@
 	],
 	"main": "./dist/extension.js",
 	"scripts": {
-		"vscode:prepublish": "npm run build",
-		"build": "tsup src/extension.ts --dts --external=vscode",
-		"dev": "npm run build -- --watch"
+		"vscode:prepublish": "webpack --mode production",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"dev": "tsup src/extension.ts --dts --watch --external=vscode"
 	},
 	"keywords": [
 		"i18n"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/yzydeveloper/hero-i18n"
+	},
+	"homepage": "https://github.com/yzydeveloper/hero-i18n",
 	"dependencies": {
 		"@babel/core": "^7.15.8",
 		"@babel/generator": "^7.15.8",
@@ -45,8 +51,11 @@
 		"@types/node": "^14.14.37",
 		"@types/vscode": "^1.52.0",
 		"eslint": "^7.23.0",
+		"ts-loader": "^9.2.6",
 		"tsup": "^4.8.21",
-		"typescript": "^4.2.3"
+		"typescript": "^4.2.3",
+		"webpack": "^5.64.2",
+		"webpack-cli": "^4.9.1"
 	},
 	"contributes": {
 		"commands": [

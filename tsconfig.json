@@ -3,12 +3,20 @@
     "module": "CommonJS",
     "target": "es2017",
     "outDir": "dist",
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "sourceMap": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules/"
+  ]
 }
