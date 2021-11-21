@@ -1,6 +1,6 @@
-import type { TranslateResult } from '~/translators'
-import { Translator as TranslatorEngine } from '~/translators'
-import { Log } from '~/utils'
+import type { TranslateResult } from './../translators'
+import { Translator as TranslatorEngine } from './../translators'
+import { Log } from './../utils'
 import Config from './Config'
 
 export class Translator {

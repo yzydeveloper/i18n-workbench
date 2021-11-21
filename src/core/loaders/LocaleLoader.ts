@@ -3,7 +3,7 @@ import { resolve, extname } from 'path'
 import fg from 'fast-glob'
 import { flatten } from 'flat'
 import { Loader } from './Loader'
-import { Log, findLanguage } from '~/utils'
+import { Log, findLanguage } from './../../utils'
 import { Global } from '..'
 import Config from '../Config'
 export class LocaleLoader extends Loader {

@@ -1,12 +1,12 @@
 import type { ExtensionContext, Uri } from 'vscode'
-import type { ExtractorResult } from '~/extractor/base'
+import type { ExtractorResult } from './../extractor/base'
 import type { PendingData } from '.'
 import { workspace, window } from 'vscode'
 import { extname } from 'path'
 import { Global } from '.'
 import Config from './Config'
-import { findLanguage } from '~/utils'
-import { Extractor } from '~/extractor'
+import { findLanguage } from './../utils'
+import { Extractor } from './../extractor'
 import { Translator } from './Translator'
 export class CurrentFile {
     static uri: Uri | undefined
