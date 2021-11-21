@@ -135,39 +135,39 @@
   </head>
   <body>
     <div id="workbench">
-      <div class="workbench-content">
-        <div class="workbench-content-header">
-          <div class="button save-button" @click="save">
-            保存到文件
-          </div>
+        <div class="workbench-content">
+            <div class="workbench-content-header">
+                <div class="button save-button" @click="save">
+                  保存到文件
+                </div>
+            </div>
+            <div v-for="(pending,index) in pendingData" :key="index" class="workbench-content-editor">
+                <div class="editor-header">
+                </div>
+                <div class="editor-title">
+                    <span>Key：</span>
+                    <input v-model="pending.key" class="input">
+                    <div class="buttons">
+                        <div class="button" @click="translate(pending,index)">翻译</div>
+                    </div>
+                </div>
+                <div class="editor-core" v-for="locale in allLocales">
+                    <div class="editor-core-translate">{{ locale }}</div>
+                    <div class="editor-core-content">
+                        <input class="input" @change="handleRepeatData($event,index,locale)" v-model="pending.value[locale]">
+                    </div>
+                    <div class="editor-core-path" v-if="dirStructure==='dir'">
+                        <select :title="pending.insertPath[locale]" class="select" v-model="pending.insertPath[locale]">
+                           <option class="option" :value="path" v-for="path in pathMapping[locale]" :key="path">{{ path }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div v-for="(pending,index) in pendingData" :key="index" class="workbench-content-editor">
-          <div class="editor-header">
-          </div>
-          <div class="editor-title">
-            <span>Key：</span>
-            <input v-model="pending.key" class="input">
-            <div class="buttons">
-              <div class="button" @click="translate(pending,index)">翻译</div>
-            </div>
-          </div>
-          <div class="editor-core" v-for="locale in allLocales">
-            <div class="editor-core-translate">{{ locale }}</div>
-            <div class="editor-core-content">
-              <input class="input" v-model="pending.value[locale]">
-            </div>
-            <div class="editor-core-path" v-if="dirStructure==='dir'">
-              <select :title="pending.insertPath[locale]" class="select" v-model="pending.insertPath[locale]">
-                <option class="option" :value="path" v-for="path in pathMapping[locale]" :key="path">{{ path }}</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </body>
   <script type="module">
-    import { createApp, ref, computed } from 'https://cdn.jsdelivr.net/npm/vue@3.2.21/dist/vue.esm-browser.js'
+    import { createApp, ref, computed, watchEffect } from 'https://cdn.jsdelivr.net/npm/vue@3.2.21/dist/vue.esm-browser.js'
     const vscode = window.acquireVsCodeApi()
     const _events = {
       READY: 0,
@@ -194,7 +194,6 @@
             return _
           }, {})
         })
-
         // 更新单个数据
         const updateSignal = (data) => {
           const { value, index } = data
@@ -202,10 +201,16 @@
         }
         // 保存到文件
         const save = () => {
+          console.log(pendingData.value, 'pendingData.value')
           vscode.postMessage({
             type: _events.SAVE,
             data: JSON.stringify(pendingData.value),
           })
+        }
+        const handleRepeatData = (event, index, locale) => {
+          console.log(event, 'event')
+          console.log(index, 'index')
+          console.log(locale, 'locale')
         }
         // 翻译
         const translate = (pending, index) => {
@@ -241,7 +246,7 @@
           pathMapping,
           save,
           translate,
-
+          handleRepeatData,
         }
       },
     }).mount('#workbench')

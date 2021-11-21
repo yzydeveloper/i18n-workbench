@@ -8,6 +8,10 @@ export type Readonly<T> = {
     readonly [P in keyof T]: T[P]
 }
 
+export type Dictionary<T> = {
+    [key: string]: T
+}
+
 export type LocalesPath = string
 
 export type DirStructure = 'file' | 'dir' | ''
@@ -25,6 +29,12 @@ export interface ParsedFile {
 
 export interface PendingData {
     key: string
-    insertPath: string | object // 写入的文件，对应语言环境或者语言类型
-    value: object
+    insertPath: string | Dictionary<string> // 写入的文件，对应语言环境或者语言类型
+    value: Dictionary<object>
+}
+
+export interface UsableData {
+    rootKeys: string[]
+    unFlattenData: Dictionary<object>
+    flattenData: object
 }

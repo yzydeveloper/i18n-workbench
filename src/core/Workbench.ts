@@ -1,9 +1,10 @@
 import type { WebviewPanel } from 'vscode'
+import type { PendingData, UsableData, Dictionary } from './types'
 import { join } from 'path'
 import { readFileSync, writeFileSync } from 'fs'
 import { window, ViewColumn, Uri, Disposable, workspace } from 'vscode'
 import { findLanguage } from './../utils'
-// import { flatten } from 'flat'
+import { unflatten } from 'flat'
 import { Global, CurrentFile } from '.'
 import { isObjectProperty, isIdentifier, isExportDefaultDeclaration } from '@babel/types'
 import { parse, parseExpression } from '@babel/parser'
@@ -88,8 +89,9 @@ export class Workbench {
 
     // 保存到文件
     public async saveToFile(data: Message['data']) {
-        const pendingData = JSON.parse(data)
-        console.log(pendingData, '哈哈')
+        const pendingData: PendingData[] = JSON.parse(data)
+        const usableData = this.handlePendingData(pendingData)
+        console.log(usableData, 'usableData')
         return
         const mock = `{
             filesView: {
@@ -156,6 +158,32 @@ export class Workbench {
                 value: r
             }
         })
+    }
+
+    // 处理等待数据
+    public handlePendingData(data: PendingData[]) {
+        const usableData = data.reduce((result, item) => {
+            const { key, insertPath, value: language } = item
+            const rootKey = key.split('.')[0]
+            if (key && rootKey) {
+                Object.keys(item.insertPath).forEach(locale => {
+                    if (typeof insertPath === 'object') {
+                        if (!result[insertPath[locale]]) {
+                            result[insertPath[locale]] = {
+                                rootKeys: [],
+                                unFlattenData: {},
+                                flattenData: {}
+                            }
+                        }
+                        result[insertPath[locale]].rootKeys.push(rootKey)
+                        result[insertPath[locale]].unFlattenData[key] = language[locale]
+                        result[insertPath[locale]].flattenData = unflatten(result[insertPath[locale]].unFlattenData)
+                    }
+                })
+            }
+            return result
+        }, {} as Dictionary<UsableData>)
+        return usableData
     }
 
     public dispose() {

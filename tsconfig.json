@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "module": "CommonJS",
     "target": "es2017",
     "outDir": "dist",
