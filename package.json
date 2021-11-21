@@ -43,28 +43,10 @@
 		"@types/node": "^14.14.37",
 		"@types/vscode": "^1.52.0",
 		"eslint": "^7.23.0",
-		"pkg-up": "^3.1.0",
 		"tsup": "^4.8.21",
 		"typescript": "^4.2.3"
 	},
 	"contributes": {
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "hero-i18n",
-					"title": "拯救国际化",
-					"icon": "resources/icon.svg"
-				}
-			]
-		},
-		"views": {
-			"hero-i18n": [
-				{
-					"id": "hero-i18n",
-					"name": "拯救国际化"
-				}
-			]
-		},
 		"commands": [
 			{
 				"command": "hero-i18n.config-locales",
@@ -77,10 +59,6 @@
 			{
 				"command": "hero-i18n.extract",
 				"title": "Extract To File"
-			},
-			{
-				"command": "hero-i18n.transform",
-				"title": "Transform I18n"
 			}
 		],
 		"menus": {
@@ -89,11 +67,6 @@
 					"when": "editorFocus && resourceLangId =~ /^javascript$|^vue$/",
 					"command": "hero-i18n.extract",
 					"group": "1_modification@4"
-				},
-				{
-					"when": "editorFocus && resourceLangId =~ /^javascript$|^vue$/",
-					"command": "hero-i18n.transform",
-					"group": "1_modification@5"
 				}
 			],
 			"explorer/context": [
@@ -101,11 +74,6 @@
 					"command": "hero-i18n.extract",
 					"when": "resourceLangId =~ /^vue$|^javascript$/",
 					"group": "1_modification@4"
-				},
-				{
-					"command": "hero-i18n.transform",
-					"when": "resourceLangId =~ /^vue$|^javascript$/",
-					"group": "1_modification@5"
 				}
 			]
 		},
@@ -133,9 +101,9 @@
 						],
 						"default": [
 							"google-cn"
-						],
-						"description": "翻译服务提供商"
-					}
+						]
+					},
+					"description": "翻译服务提供商"
 				},
 				"hero-i18n.sourceLanguage": {
 					"type": "string",

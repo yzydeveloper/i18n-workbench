@@ -1,9 +1,9 @@
 import type { ExtensionContext, WorkspaceFolder } from 'vscode'
 import { workspace, window } from 'vscode'
-import { ConfigLocalesGuide } from '~/commands/configLocalePaths'
+import { ConfigLocalesGuide } from './../commands/configLocalePaths'
 import { LocaleLoader } from './loaders/LocaleLoader'
-import { AvailableParsers } from '~/parsers'
-import { Log } from '~/utils'
+import { AvailableParsers } from './../parsers'
+import { Log } from './../utils'
 import Config from './Config'
 export class Global {
     private static _loaders: Record<string, LocaleLoader> = {}

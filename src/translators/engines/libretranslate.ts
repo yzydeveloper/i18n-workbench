@@ -1,6 +1,6 @@
 import axios from 'axios'
 import TranslateEngine, { TranslateOptions, TranslateResult } from './base'
-import Config from '~/core/Config'
+import Config from './../../core/Config'
 
 export default class LibreTranslate extends TranslateEngine {
     apiRoot = 'http://localhost:5000'

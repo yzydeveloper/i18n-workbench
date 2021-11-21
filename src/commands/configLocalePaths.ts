@@ -1,10 +1,10 @@
-import type { ExtensionModule } from '~/core'
+import type { ExtensionModule } from './../core'
 import path from 'path'
 import { Uri, workspace, window, commands } from 'vscode'
 import fg from 'fast-glob'
 import { Commands } from './commands'
-import Config from '~/core/Config'
-import { Log } from '~/utils'
+import Config from './..//core/Config'
+import { Log } from './../utils'
 
 export class ConfigLocalesGuide {
     static async prompt() {

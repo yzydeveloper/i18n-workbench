@@ -1,22 +1,14 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "module": "commonjs",
+    "module": "CommonJS",
     "target": "es2017",
-    "outDir": "out",
-    "lib": [
-      "esnext"
-    ],
+    "outDir": "dist",
+    "lib": ["esnext"],
     "sourceMap": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
     "noUnusedLocals": true,
-    "resolveJsonModule": true,
-    "paths": {
-      "~/*": [
-        "src/*"
-      ]
-    }
+    "resolveJsonModule": true
   }
 }
