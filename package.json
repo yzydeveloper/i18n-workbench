@@ -3,7 +3,7 @@
 	"name": "hero-i18n",
 	"displayName": "Hero i18n",
 	"description": "This is a hero",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.60.0"
@@ -18,9 +18,10 @@
 	],
 	"main": "./dist/extension.js",
 	"scripts": {
-		"vscode:prepublish": "webpack --mode production",
+		"vscode:prepublish": "vite build",
 		"webpack": "webpack --mode development",
 		"webpack-dev": "webpack --mode development --watch",
+		"vite:dev": "vite build",
 		"dev": "tsup src/extension.ts --dts --watch --external=vscode"
 	},
 	"keywords": [
@@ -54,6 +55,7 @@
 		"ts-loader": "^9.2.6",
 		"tsup": "^4.8.21",
 		"typescript": "^4.2.3",
+		"vite": "^2.7.2",
 		"webpack": "^5.64.2",
 		"webpack-cli": "^4.9.1"
 	},
