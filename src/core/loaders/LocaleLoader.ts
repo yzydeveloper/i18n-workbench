@@ -113,7 +113,7 @@ export class LocaleLoader extends Loader {
                 locale,
                 filePath,
                 dirPath,
-                value,
+                unflattenValue: value,
                 flattenValue
             }
             this._files[filePath] = data

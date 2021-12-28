@@ -21,10 +21,12 @@ export interface ExtensionModule {
 }
 
 export interface ParsedFile {
+    originLocale: string
+    locale: string
     filePath: string
     dirPath: string
-    locale: string
-    value: string
+    unflattenValue: string
+    flattenValue: unknown
 }
 
 export interface PendingData {
