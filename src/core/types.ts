@@ -35,6 +35,6 @@ export interface PendingData {
 
 export interface UsableData {
     rootKeys: string[]
-    unFlattenData: Dictionary<object>
-    flattenData: object
+    unFlattenData: object
+    flattenData: Dictionary<object>
 }

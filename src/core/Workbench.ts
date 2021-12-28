@@ -176,8 +176,8 @@ export class Workbench {
                             }
                         }
                         result[insertPath[locale]].rootKeys.push(rootKey)
-                        result[insertPath[locale]].unFlattenData[key] = language[locale]
-                        result[insertPath[locale]].flattenData = unflatten(result[insertPath[locale]].unFlattenData)
+                        result[insertPath[locale]].flattenData[key] = language[locale]
+                        result[insertPath[locale]].unFlattenData = unflatten(result[insertPath[locale]].flattenData)
                     }
                 })
             }
