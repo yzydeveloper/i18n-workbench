@@ -47,13 +47,11 @@ export class CurrentFile {
             ...template?.content || []
         ]))
 
-        return words.reduce((result, word) => {
-            const value = allLocales.reduce((_, locale) => {
+        return words.reduce<PendingData[]>((result, word) => {
+            const value = allLocales.reduce<PendingData['value']>((_, locale) => {
                 _[locale] = locale === from ? word : ''
                 return _
-            }, {} as {
-                [key: string]: string
-            })
+            }, {})
 
             result.push({
                 key: '',
@@ -62,7 +60,7 @@ export class CurrentFile {
             })
 
             return result
-        }, [] as PendingData[])
+        }, [])
     }
 
     /**

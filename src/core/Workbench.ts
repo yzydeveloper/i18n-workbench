@@ -162,7 +162,7 @@ export class Workbench {
 
     // 处理等待数据
     public handlePendingData(data: PendingData[]) {
-        const usableData = data.reduce((result, item) => {
+        const usableData = data.reduce<Dictionary<UsableData>>((result, item) => {
             const { key, insertPath, value: language } = item
             const rootKey = key.split('.')[0]
             if (key && rootKey) {
@@ -182,7 +182,7 @@ export class Workbench {
                 })
             }
             return result
-        }, {} as Dictionary<UsableData>)
+        }, {})
         return usableData
     }
 
