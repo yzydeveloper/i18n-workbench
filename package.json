@@ -18,13 +18,12 @@
 	],
 	"main": "./dist/extension.js",
 	"scripts": {
-		"vscode:prepublish": "vite build",
+		"vscode:prepublish": "npm run build",
 		"dev": "tsup src/extension.ts --dts --watch --external=vscode",
+		"build": "webpack --mode development",
 		"webpack-dev": "webpack --mode development --watch",
-		"webpack": "webpack --mode development",
 		"workbench:dev": "vite build --watch --config ./src/editor/vite.config.ts",
-		"workbench:build": "vite --watch --config ./src/editor/vite.config.ts",
-		"vite:dev": "vite build"
+		"workbench:build": "vite --watch --config ./src/editor/vite.config.ts"
 	},
 	"keywords": [
 		"i18n"
