@@ -3,6 +3,7 @@ node_modules
 .vscode-test/
 *.vsix
 .vscode/.as-fs
+resources/workbench/
 dist
 yarn.lock
 package-lock.json

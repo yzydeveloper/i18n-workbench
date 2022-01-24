@@ -19,10 +19,12 @@
 	"main": "./dist/extension.js",
 	"scripts": {
 		"vscode:prepublish": "vite build",
-		"webpack": "webpack --mode development",
+		"dev": "tsup src/extension.ts --dts --watch --external=vscode",
 		"webpack-dev": "webpack --mode development --watch",
-		"vite:dev": "vite build",
-		"dev": "tsup src/extension.ts --dts --watch --external=vscode"
+		"webpack": "webpack --mode development",
+		"workbench:dev": "vite build --watch --config ./src/editor/vite.config.ts",
+		"workbench:build": "vite --watch --config ./src/editor/vite.config.ts",
+		"vite:dev": "vite build"
 	},
 	"keywords": [
 		"i18n"
@@ -42,7 +44,8 @@
 		"@vue/compiler-core": "^3.2.20",
 		"axios": "^0.23.0",
 		"fast-glob": "^3.2.7",
-		"flat": "^5.0.2"
+		"flat": "^5.0.2",
+		"vue": "3.2.26"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^0.6.2",
@@ -51,6 +54,7 @@
 		"@types/flat": "^5.0.2",
 		"@types/node": "^14.14.37",
 		"@types/vscode": "^1.52.0",
+		"@vitejs/plugin-vue": "^2.0.1",
 		"eslint": "^7.23.0",
 		"ts-loader": "^9.2.6",
 		"tsup": "^4.8.21",
