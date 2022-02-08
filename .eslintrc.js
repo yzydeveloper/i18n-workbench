@@ -1,8 +1,21 @@
 module.exports = {
-    extends: '@antfu/eslint-config',
+    extends: [
+        '@antfu/eslint-config-ts'
+    ],
     overrides: [
         {
-            files: ['*.js', '*.ts'],
+            files: ['*.vue'],
+            parser: 'vue-eslint-parser', // ghost dependency
+            parserOptions: {
+                parser: '@typescript-eslint/parser',
+            },
+            rules: {
+                'no-unused-vars': 'off',
+                '@typescript-eslint/no-unused-vars': 'off',
+            },
+        },
+        {
+            files: ['*.vue', '*.js', '*.ts'],
             rules: {
                 'no-debugger': 'off',
                 'no-console': 0,
@@ -64,7 +77,7 @@ module.exports = {
                 'import/no-useless-path-segments': 'off',
                 'class-methods-use-this': 'off',
                 'max-classes-per-file': 'off',
-                '@typescript-eslint/indent': ['error', 4]
+                '@typescript-eslint/indent': ['error', 4],
             },
         },
     ],
