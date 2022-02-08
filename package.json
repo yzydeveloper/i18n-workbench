@@ -22,8 +22,8 @@
 		"dev": "tsup src/extension.ts --dts --watch --external=vscode",
 		"build": "webpack --mode development",
 		"webpack-dev": "webpack --mode development --watch",
-		"workbench:dev": "vite build --watch --config ./src/editor/vite.config.ts",
-		"workbench:build": "vite --watch --config ./src/editor/vite.config.ts"
+		"workbench:build": "vite build --watch --config ./src/editor/vite.config.ts",
+		"workbench:dev": "vite --config ./src/editor/vite.config.ts"
 	},
 	"keywords": [
 		"i18n"
