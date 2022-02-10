@@ -8,7 +8,6 @@ import {
     InterpolationNode,
     SimpleExpressionNode,
     ExpressionNode,
-    TextNode,
     isText,
     baseParse as parse,
 } from '@vue/compiler-core'
@@ -58,6 +57,8 @@ export class SfcExtractor extends ExtractorAbstract {
                     break
             }
         })
+        console.log(result, 'result')
+
         return result
     }
 
@@ -84,8 +85,8 @@ export class SfcExtractor extends ExtractorAbstract {
     parseTemplateText(templateNode: TemplateChildNode): string[] {
         const words: string[] = []
         const visitorAttr = (node: DirectiveNode) => {
-            const exp = node.exp as ExpressionNode
-            if (this.isSimpleExpressionNode(exp)) {
+            const exp = node.exp
+            if (exp && this.isSimpleExpressionNode(exp)) {
                 const { content } = exp
                 this.splitTemplateLiteral(content).forEach(c => words.push(c))
             }
@@ -114,8 +115,9 @@ export class SfcExtractor extends ExtractorAbstract {
                         visitorAttr(inlineNode)
 
                     if (this.isProp(inlineNode)) {
-                        const { content } = inlineNode.value as TextNode
-                        words.push(content)
+                        const { value } = inlineNode
+                        if (value)
+                            words.push(value.content)
                     }
                 })
 
@@ -154,10 +156,12 @@ export class SfcExtractor extends ExtractorAbstract {
             })
             traverse(ast, {
                 StringLiteral(path) {
+                    if(path.findParent(p => p.isImportDeclaration())) return
                     const { value } = path.node
                     words.push(value)
                 },
                 TemplateLiteral: (path) => {
+                    if(path.findParent(p => p.isImportDeclaration())) return
                     const value = path.get('quasis').map(item => item.node.value.raw)
                     value.forEach(v => {
                         this.splitTemplateLiteral(v).forEach(t => {
