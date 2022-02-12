@@ -1,9 +1,9 @@
 import type { WebviewPanel } from 'vscode'
 import type { PendingData, UsableData, Dictionary } from './types'
 import { join } from 'path'
-import { readFileSync, writeFileSync } from 'fs'
+import { writeFileSync } from 'fs'
 import { window, ViewColumn, Uri, Disposable, workspace } from 'vscode'
-import { findLanguage } from './../utils'
+import { findLanguage, getHtmlForWebview } from './../utils'
 import { unflatten } from 'flat'
 import { Global, CurrentFile } from '.'
 import { isObjectProperty, isIdentifier, isExportDefaultDeclaration } from '@babel/types'
@@ -60,24 +60,15 @@ export class Workbench {
     }
 
     private constructor() {
-        this.panel = window.createWebviewPanel(
-            'workbench',
-            '工作台',
-            ViewColumn.Beside,
-            { enableScripts: true }
-        )
-
+        this.panel = window.createWebviewPanel('workbench', '工作台', ViewColumn.Beside, {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+        })
         this.panel.iconPath = Uri.file(
             join(Config.extensionPath, 'resources/workbench.svg')
         )
-
-        this.panel.webview.html = readFileSync(
-            join(Config.extensionPath, 'resources/workbench.html'),
-            'utf-8',
-        )
-
+        this.panel.webview.html = getHtmlForWebview(Config.extensionPath, 'resources/workbench/index.html')
         this.panel.webview.onDidReceiveMessage((message) => this.handleMessages(message), null, this.disposables)
-
         this.panel.onDidDispose(() => this.dispose(), null, this.disposables)
     }
 

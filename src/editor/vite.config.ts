@@ -6,11 +6,17 @@ const outDir = resolve(__dirname, './../../resources/workbench')
 
 export default defineConfig({
     root,
-    base: '/', // outDir
+    base: '/',
     build: {
         outDir,
         emptyOutDir: true,
-        rollupOptions: {}
+        rollupOptions: {
+            output: {
+                entryFileNames: '[name].js',
+                chunkFileNames: '[name].js',
+                assetFileNames: '[name].[ext]'
+            }
+        }
     },
     plugins: [
         vue()
