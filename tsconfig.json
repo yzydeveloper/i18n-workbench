@@ -5,7 +5,8 @@
     "target": "es2017",
     "outDir": "dist",
     "lib": [
-      "esnext"
+      "ESNext",
+      "DOM"
     ],
     "sourceMap": true,
     "moduleResolution": "node",
