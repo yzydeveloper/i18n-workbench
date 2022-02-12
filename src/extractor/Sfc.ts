@@ -1,5 +1,5 @@
-import ExtractorAbstract, { ExtractorOptions, ExtractorResult } from './base'
-import { workspace } from 'vscode'
+import ExtractorAbstract, { ExtractorResult } from './base'
+import { workspace, window, Range } from 'vscode'
 import {
     TemplateChildNode,
     ElementNode,
@@ -13,17 +13,15 @@ import {
 } from '@vue/compiler-core'
 import { ParserPlugin, parse as babelParse } from '@babel/parser'
 import traverse from '@babel/traverse'
+import { CHINESE_REGEX } from './../meta'
 
 export class SfcExtractor extends ExtractorAbstract {
-    // public readonly id = 'vue'
+    public readonly id = 'vue'
 
-    async extractor(options: ExtractorOptions): Promise<ExtractorResult> {
-        const doc = await workspace.openTextDocument(this.uri)
-        const texts = doc.getText()
-        const result: ExtractorResult = {
-            id: options.id
-        }
-        const ast = parse(texts, {
+    async extractor(): Promise<ExtractorResult[]> {
+        const document = await workspace.openTextDocument(this.uri)
+        const code = document.getText()
+        const ast = parse(code, {
             getTextMode: ({ tag, props }, parent) => {
                 if (
                     (!parent && tag !== 'template')
@@ -42,23 +40,21 @@ export class SfcExtractor extends ExtractorAbstract {
                     return 0
             },
         })
+        const result: ExtractorResult[] = []
         ast.children.forEach(node => {
             if (node.type !== 1) // NODETYPES.ELEMENT
                 return
-
             switch (node.tag) {
                 case 'template':
-                    result.template = this.createExtractorResult(node)
+                    this.createExtractorResult(node).forEach(item => result.push(item))
                     break
                 case 'script':
-                    result.script = this.createExtractorResult(node)
+                    this.createExtractorResult(node).forEach(item => result.push(item))
                     break
                 default:
                     break
             }
         })
-        console.log(result, 'result')
-
         return result
     }
 
@@ -79,29 +75,72 @@ export class SfcExtractor extends ExtractorAbstract {
     }
 
     splitTemplateLiteral(content: string): string[] {
-        return content.match(/[\u4E00-\u9FA5]+/gm) ?? []
+        return content.match(CHINESE_REGEX) ?? []
     }
 
-    parseTemplateText(templateNode: TemplateChildNode): string[] {
-        const words: string[] = []
+    parseTemplateText(templateNode: TemplateChildNode) {
+        const document = window.activeTextEditor?.document
+        if (!document) return []
+        const { source } = templateNode.loc
+        const words: ExtractorResult[] = []
         const visitorAttr = (node: DirectiveNode) => {
             const exp = node.exp
             if (exp && this.isSimpleExpressionNode(exp)) {
                 const { content } = exp
-                this.splitTemplateLiteral(content).forEach(c => words.push(c))
+                this.splitTemplateLiteral(content).forEach(t => {
+                    const start = source.indexOf(t)
+                    const end = start + t.length
+                    const range = new Range(
+                        document.positionAt(start),
+                        document.positionAt(end)
+                    )
+                    words.push({
+                        id: this.id,
+                        text: t,
+                        start,
+                        end,
+                        range
+                    })
+                })
             }
         }
         const visitor = (node: TemplateChildNode) => {
             if (isText(node)) {
                 if (!this.isInterPolation(node)) {
                     this.splitTemplateLiteral(node.content).forEach(t => {
-                        words.push(t)
+                        const start = source.indexOf(t)
+                        const end = start + t.length
+                        const range = new Range(
+                            document.positionAt(start),
+                            document.positionAt(end)
+                        )
+                        words.push({
+                            id: this.id,
+                            text: t,
+                            start,
+                            end,
+                            range
+                        })
                     })
                 }
                 else {
                     if (this.isSimpleExpressionNode(node.content)) {
                         const { content } = node.content
-                        this.splitTemplateLiteral(content).forEach(t => words.push(t))
+                        this.splitTemplateLiteral(content).forEach(t => {
+                            const start = source.indexOf(t)
+                            const end = start + t.length
+                            const range = new Range(
+                                document.positionAt(start),
+                                document.positionAt(end)
+                            )
+                            words.push({
+                                id: this.id,
+                                text: t,
+                                start,
+                                end,
+                                range
+                            })
+                        })
                     }
 
                     // TODO
@@ -116,8 +155,27 @@ export class SfcExtractor extends ExtractorAbstract {
 
                     if (this.isProp(inlineNode)) {
                         const { value } = inlineNode
-                        if (value)
-                            words.push(value.content)
+                        if (value) {
+                            const {
+                                loc: {
+                                    start: { offset }
+                                },
+                                content
+                            } = value
+                            const start = offset + 1
+                            const end = offset + 1 + content.length
+                            const range = new Range(
+                                document.positionAt(start),
+                                document.positionAt(end)
+                            )
+                            words.push({
+                                id: this.id,
+                                text: content,
+                                start,
+                                end,
+                                range
+                            })
+                        }
                     }
                 })
 
@@ -126,13 +184,14 @@ export class SfcExtractor extends ExtractorAbstract {
             }
         }
         visitor(templateNode)
-        return words.filter(word => word)
+        return words
     }
 
-    parseJsText(scriptNode: TemplateChildNode): string[] {
+    parseJsText(scriptNode: TemplateChildNode) {
+        const document = window.activeTextEditor?.document
+        if (!document) return []
         if (scriptNode.type !== 1) return []
-
-        const words: string[] = []
+        const words: ExtractorResult[] = []
         const plugins: ParserPlugin[] = []
         scriptNode.props.forEach(p => {
             if (p.type === 6) {
@@ -149,47 +208,63 @@ export class SfcExtractor extends ExtractorAbstract {
         })
 
         for (let i = 0; i < scriptNode.children.length; i++) {
-            const { source } = scriptNode.children[i].loc
+            const { source, start: { offset } } = scriptNode.children[i].loc
             const ast = babelParse(source, {
                 plugins,
                 sourceType: 'module'
             })
             traverse(ast, {
-                StringLiteral(path) {
-                    if(path.findParent(p => p.isImportDeclaration())) return
-                    const { value } = path.node
-                    words.push(value)
+                StringLiteral: (path) => {
+                    const { value, start, end } = path.node
+                    if (!start || !end) return
+                    if (path.findParent(p => p.isImportDeclaration())) return
+                    const range = new Range(
+                        /** 加一，减一的原因是，去除引号 */
+                        document.positionAt(start + 1 + offset),
+                        document.positionAt(end - 1 + offset)
+                    )
+                    words.push({
+                        id: this.id,
+                        text: value,
+                        start,
+                        end,
+                        range
+                    })
                 },
                 TemplateLiteral: (path) => {
-                    if(path.findParent(p => p.isImportDeclaration())) return
+                    if (path.findParent(p => p.isImportDeclaration())) return
                     const value = path.get('quasis').map(item => item.node.value.raw)
                     value.forEach(v => {
                         this.splitTemplateLiteral(v).forEach(t => {
-                            words.push(t)
+                            // 1 是减去了 `
+                            const start = source.indexOf(t) - 1
+                            const end = start + t.length
+                            const range = new Range(
+                                document.positionAt(start + offset),
+                                document.positionAt(end + offset)
+                            )
+                            words.push({
+                                id: this.id,
+                                text: t,
+                                start,
+                                end,
+                                range
+                            })
                         })
                     })
                 }
             })
         }
-        return words.filter(word => word)
+        return words
     }
 
     createExtractorResult(node: ElementNode) {
-        const { tag, loc } = node
-        const { start, end } = loc
-        if (tag === 'template') {
-            return {
-                content: this.parseTemplateText(node),
-                start,
-                end
-            }
-        }
-        if (tag === 'script') {
-            return {
-                content: this.parseJsText(node),
-                start,
-                end
-            }
-        }
+        const { tag } = node
+        if (tag === 'template')
+            return this.parseTemplateText(node)
+
+        if (tag === 'script')
+            return this.parseJsText(node)
+        return []
     }
 }

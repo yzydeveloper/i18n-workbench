@@ -32,7 +32,7 @@ export interface ParsedFile {
 export interface PendingData {
     key: string
     insertPath: string | Dictionary<string> // 写入的文件，对应语言环境或者语言类型
-    value: Dictionary<string>
+    languages: Dictionary<string>
 }
 
 export interface UsableData {

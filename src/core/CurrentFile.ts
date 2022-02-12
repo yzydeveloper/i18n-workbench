@@ -11,7 +11,7 @@ import { Translator } from './Translator'
 export class CurrentFile {
     static uri: Uri | undefined
     static _extractor: Extractor | null = null
-    static _source: ExtractorResult
+    static _extractor_result: ExtractorResult[]
     static watch(ctx: ExtensionContext) {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
         ctx.subscriptions.push(workspace.onDidChangeTextDocument(e => {
@@ -23,7 +23,7 @@ export class CurrentFile {
 
     static update(uri?: Uri) {
         this.uri = uri
-        if (uri)
+        if (uri && this._extractor?.id !== this.id)
             this._extractor = new Extractor(uri)
     }
 
@@ -33,32 +33,29 @@ export class CurrentFile {
         return ''
     }
 
-    static get source() {
-        return this._source
+    static get extractor_result() {
+        return this._extractor_result
+    }
+
+    static set extractor_result(value) {
+        this._extractor_result = value
     }
 
     static get pending() {
-        const { script, template } = this.source
         const { allLocales } = Global.loader
         const from = findLanguage(Config.sourceLanguage)
 
-        const words = Array.from(new Set([
-            ...script?.content || [],
-            ...template?.content || []
-        ]))
-
-        return words.reduce<PendingData[]>((result, word) => {
-            const value = allLocales.reduce<PendingData['value']>((_, locale) => {
-                _[locale] = locale === from ? word : ''
+        return this.extractor_result.reduce<PendingData[]>((result, item) => {
+            const languages = allLocales.reduce<PendingData['languages']>((_, locale) => {
+                _[locale] = locale === from ? item.text : ''
                 return _
             }, {})
 
             result.push({
                 key: '',
                 insertPath: {},
-                value
+                languages
             })
-
             return result
         }, [])
     }
@@ -71,30 +68,12 @@ export class CurrentFile {
             const result = await this._extractor.extract({
                 id: this.id
             })
-            this._source = result
+            this.extractor_result = result
         }
     }
 
     static write() {
 
-    }
-
-    // 本来批量翻译的---然后被识别成机器人~
-    static async translate(text: string) {
-        const pending = Array.from(new Set([text]))
-        const allLocales = Global.loader.allLocales
-        const from = findLanguage(Config.sourceLanguage)
-        const tasks = pending.map(text => {
-            return Translator.translate(from, text, allLocales).then(finish => {
-                return {
-                    id: Date.now(),
-                    value: finish
-                }
-            })
-        })
-        const result = await Promise.all(tasks)
-
-        return result
     }
 
     static async translateSingle(text: string) {
