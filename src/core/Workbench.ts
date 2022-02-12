@@ -19,7 +19,7 @@ export interface Message {
 enum EventTypes {
     READY,
     CONFIG,
-    UPDATE_SINGLE,
+    TRANSLATE_SINGLE,
     SAVE
 }
 export class Workbench {
@@ -53,7 +53,7 @@ export class Workbench {
             case EventTypes.SAVE:
                 this.saveToFile(data)
                 break
-            case EventTypes.UPDATE_SINGLE:
+            case EventTypes.TRANSLATE_SINGLE:
                 this.translateSignal(data)
                 break
         }
@@ -143,7 +143,7 @@ export class Workbench {
         const { text, index } = data
         const r = await CurrentFile.translateSingle(text)
         this.panel.webview.postMessage({
-            type: EventTypes.UPDATE_SINGLE,
+            type: EventTypes.TRANSLATE_SINGLE,
             data: {
                 index,
                 value: r
@@ -154,7 +154,7 @@ export class Workbench {
     // 处理等待数据
     public handlePendingData(data: PendingData[]) {
         const usableData = data.reduce<Dictionary<UsableData>>((result, item) => {
-            const { key, insertPath, value: language } = item
+            const { key, insertPath, languages } = item
             const rootKey = key.split('.')[0]
             if (key && rootKey) {
                 Object.keys(item.insertPath).forEach(locale => {
@@ -167,7 +167,7 @@ export class Workbench {
                             }
                         }
                         result[insertPath[locale]].rootKeys.push(rootKey)
-                        result[insertPath[locale]].flattenData[key] = language[locale]
+                        result[insertPath[locale]].flattenData[key] = languages[locale]
                         result[insertPath[locale]].unFlattenData = unflatten(result[insertPath[locale]].flattenData)
                     }
                 })
@@ -179,9 +179,7 @@ export class Workbench {
 
     public dispose() {
         Workbench.workbench = undefined
-
         Disposable.from(...this.disposables).dispose()
-
         this.panel.dispose()
     }
 }
