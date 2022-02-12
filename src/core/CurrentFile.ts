@@ -14,16 +14,25 @@ export class CurrentFile {
     static _extractor_result: ExtractorResult[]
     static watch(ctx: ExtensionContext) {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
-        ctx.subscriptions.push(workspace.onDidChangeTextDocument(e => {
-            console.log(e, 'onDidChangeTextDocument')
+        ctx.subscriptions.push(workspace.onDidChangeTextDocument((e) => {
+            if (e)
+                this.retrieveSourceLanguage()
         }))
-        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => e?.document && this.update(e.document.uri)))
-        this.update(window.activeTextEditor?.document.uri)
+        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => {
+            if (e) {
+                this.update(e.document.uri)
+                this.retrieveSourceLanguage()
+            }
+        }))
+        if (window.activeTextEditor) {
+            this.update(window.activeTextEditor.document.uri)
+            this.retrieveSourceLanguage()
+        }
     }
 
-    static update(uri?: Uri) {
+    static update(uri: Uri) {
         this.uri = uri
-        if (uri && this._extractor?.id !== this.id)
+        if (this._extractor?.id !== this.id)
             this._extractor = new Extractor(uri)
     }
 

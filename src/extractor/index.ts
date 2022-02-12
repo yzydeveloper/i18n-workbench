@@ -17,6 +17,7 @@ export class Extractor {
 
     extract(options: ExtractorOptions) {
         const extractor = this.extractors[options.id]
+        if (!extractor) return []
         return extractor.extractor(options)
     }
 }

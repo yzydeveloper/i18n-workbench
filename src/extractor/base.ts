@@ -1,5 +1,6 @@
 
-import type { Uri, Range } from 'vscode'
+import type { Uri, Range, TextDocument } from 'vscode'
+import { window } from 'vscode'
 
 export type ExtractorId = 'vue'
 export type ExtractorSource = ''
@@ -22,6 +23,15 @@ export default abstract class ExtractorAbstract {
 
     get filepath() {
         return this.uri.fsPath
+    }
+
+    public _document: TextDocument | undefined = window.activeTextEditor?.document
+    get document() {
+        return this._document
+    }
+
+    set document(value) {
+        this._document = value
     }
 
     abstract extractor(options: ExtractorOptions): Promise<ExtractorResult[]>

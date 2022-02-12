@@ -1,5 +1,5 @@
 import ExtractorAbstract, { ExtractorResult } from './base'
-import { workspace, window, Range } from 'vscode'
+import { workspace, Range } from 'vscode'
 import {
     TemplateChildNode,
     ElementNode,
@@ -19,8 +19,8 @@ export class SfcExtractor extends ExtractorAbstract {
     public readonly id = 'vue'
 
     async extractor(): Promise<ExtractorResult[]> {
-        const document = await workspace.openTextDocument(this.uri)
-        const code = document.getText()
+        this.document = await workspace.openTextDocument(this.uri)
+        const code = this.document.getText()
         const ast = parse(code, {
             getTextMode: ({ tag, props }, parent) => {
                 if (
@@ -79,8 +79,9 @@ export class SfcExtractor extends ExtractorAbstract {
     }
 
     parseTemplateText(templateNode: TemplateChildNode) {
-        const document = window.activeTextEditor?.document
+        const { document } = this
         if (!document) return []
+
         const { source } = templateNode.loc
         const words: ExtractorResult[] = []
         const visitorAttr = (node: DirectiveNode) => {
@@ -188,9 +189,10 @@ export class SfcExtractor extends ExtractorAbstract {
     }
 
     parseJsText(scriptNode: TemplateChildNode) {
-        const document = window.activeTextEditor?.document
+        const { document } = this
         if (!document) return []
         if (scriptNode.type !== 1) return []
+
         const words: ExtractorResult[] = []
         const plugins: ParserPlugin[] = []
         scriptNode.props.forEach(p => {
