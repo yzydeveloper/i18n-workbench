@@ -85,8 +85,6 @@ export class Global {
             const folder = workspace.getWorkspaceFolder(resource)
             if (folder) {
                 this._currentWorkspaceFolder = folder
-                console.log(this._currentWorkspaceFolder, '_currentWorkspaceFolder')
-
                 rootPath = folder.uri.fsPath
             }
         }

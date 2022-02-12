@@ -73,7 +73,7 @@
 				"title": "自动设置语言目录"
 			},
 			{
-				"command": "hero-i18n.extract",
+				"command": "hero-i18n.open-workbench",
 				"title": "打开翻译工作台"
 			}
 		],
