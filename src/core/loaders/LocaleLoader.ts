@@ -9,9 +9,10 @@ import Config from '../Config'
 export class LocaleLoader extends Loader {
     private _files: Record<string, ParsedFile> = {}
     private _path_matcher!: RegExp
-    private _locale_file_language: Record<string, any> = {}
     private _dir_structure: DirStructure = ''
-    constructor(public readonly rootPath: string) {
+    constructor(
+        public readonly rootPath: string
+    ) {
         super(`[LOCALE]${rootPath}`)
     }
 
@@ -47,24 +48,32 @@ export class LocaleLoader extends Loader {
         this._path_matcher = new RegExp(regex)
     }
 
-    // 所有文件路径
-    get files() {
-        return Object.keys(this._files)
-    }
-
-    // 目录结构 dir | file
     get dirStructure() {
         return this._dir_structure
     }
 
-    // 所有语言
-    get allLocales() {
-        return Object.keys(this._locale_file_language)
+    get files() {
+        return this._files
     }
 
-    // 语言文件数据映射
-    get localeFileLanguage() {
-        return this._locale_file_language
+    get allLocales() {
+        return Object.keys(this.files).reduce<string[]>((result, key) => {
+            const { locale } = this.files[key]
+            if (!result.includes(locale))
+                result.push(locale)
+            return result
+        }, [])
+    }
+
+    get languageMapFile() {
+        return Object.keys(this.files).reduce<Record<string, string[]>>((result, key) => {
+            const { locale } = this.files[key]
+            if (!result[locale])
+                result[locale] = []
+            if (!result[locale].includes(key))
+                result[locale].push(key)
+            return result
+        }, {})
     }
 
     private async loadDirectory(searchingPath: string) {
@@ -108,7 +117,7 @@ export class LocaleLoader extends Loader {
             if (!locale || !parser) return
             const value = await parser.load(filePath)
             const flattenValue = flatten(value)
-            const data = {
+            this._files[filePath] = {
                 originLocale,
                 locale,
                 filePath,
@@ -116,9 +125,6 @@ export class LocaleLoader extends Loader {
                 unflattenValue: value,
                 flattenValue
             }
-            this._files[filePath] = data
-            !this._locale_file_language[locale] && (this._locale_file_language[locale] = {})
-            this._locale_file_language[locale][filePath] = data
         }
         catch (e) {
             console.log(e)

@@ -1,6 +1,6 @@
 import type { ExtensionContext, Uri } from 'vscode'
 import type { ExtractorResult } from './../extractor/base'
-import type { PendingData } from '.'
+import type { PayloadType } from '.'
 import { workspace, window } from 'vscode'
 import { extname } from 'path'
 import { Global } from '.'
@@ -50,12 +50,12 @@ export class CurrentFile {
         this._extractor_result = value
     }
 
-    static get pending() {
+    static get payload() {
         const { allLocales } = Global.loader
         const from = findLanguage(Config.sourceLanguage)
 
-        return this.extractor_result.reduce<PendingData[]>((result, item) => {
-            const languages = allLocales.reduce<PendingData['languages']>((_, locale) => {
+        return this.extractor_result.reduce<PayloadType[]>((result, item) => {
+            const languages = allLocales.reduce<PayloadType['languages']>((_, locale) => {
                 _[locale] = locale === from ? item.text : ''
                 return _
             }, {})

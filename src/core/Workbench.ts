@@ -1,15 +1,10 @@
 import type { WebviewPanel } from 'vscode'
-import type { PendingData, UsableData, Dictionary } from './types'
+import type { PayloadType, UsableData, Dictionary } from './types'
 import { join } from 'path'
-import { writeFileSync } from 'fs'
-import { window, ViewColumn, Uri, Disposable, workspace } from 'vscode'
+import { window, ViewColumn, Uri, Disposable } from 'vscode'
 import { findLanguage, getHtmlForWebview } from './../utils'
 import { unflatten } from 'flat'
 import { Global, CurrentFile } from '.'
-import { isObjectProperty, isIdentifier, isExportDefaultDeclaration } from '@babel/types'
-import { parse, parseExpression } from '@babel/parser'
-import traverse from '@babel/traverse'
-import generate from '@babel/generator'
 import Config from './Config'
 
 export interface Message {
@@ -29,14 +24,14 @@ export class Workbench {
 
     private get config() {
         const { loader } = Global
-        const { allLocales, localeFileLanguage, dirStructure } = loader
-        const { pending } = CurrentFile
+        const { allLocales, languageMapFile, dirStructure } = loader
+        const { payload } = CurrentFile
         return {
-            allLocales,
-            sourceLanguage: findLanguage(Config.sourceLanguage),
             dirStructure,
-            localeFileLanguage,
-            pending
+            allLocales,
+            languageMapFile,
+            sourceLanguage: findLanguage(Config.sourceLanguage),
+            payload
         }
     }
 
@@ -80,62 +75,9 @@ export class Workbench {
 
     // 保存到文件
     public async saveToFile(data: Message['data']) {
-        const pendingData: PendingData[] = JSON.parse(data)
-        const usableData = this.handlePendingData(pendingData)
+        const payload: PayloadType[] = JSON.parse(data)
+        const usableData = this.handlePayload(payload)
         console.log(usableData, 'usableData')
-        return
-        const mock = `{
-            filesView: {
-                IN_WARNING: '告警中',
-                SHIELDED: '已屏蔽',
-                LIFTED: '已解除',
-            },
-            test:"测试"
-        }`
-        const { files, localeFileLanguage } = Global.loader
-        console.log(files, 'loader')
-        const filePath = files[2]
-        console.log(localeFileLanguage['zh-cn'][filePath], 'data')
-        const document = await workspace.openTextDocument(filePath)
-        const texts = await document.getText()
-        const sourceAst = parse(texts, {
-            sourceType: 'module'
-        })
-        console.log(sourceAst, 'sourceAst')
-        const tempKey = ['warningStates']
-        traverse(sourceAst, {
-            Program: {
-                enter(path) {
-                    path.traverse({
-                        ObjectExpression(p) {
-                            if (isExportDefaultDeclaration(p.parent)) {
-                                const { properties } = p.node
-                                properties.forEach(propertie => {
-                                    if (isObjectProperty(propertie)) {
-                                        if (isIdentifier(propertie.key)) {
-                                            const key = propertie.key.name
-                                            if (tempKey.includes(key))
-                                                propertie.value = parseExpression(mock)
-                                        }
-                                    }
-                                })
-                            }
-                        }
-                    })
-                }
-            }
-        })
-        const { code } = generate(sourceAst, {
-            retainLines: false,
-            compact: 'auto',
-            concise: false,
-            jsescOption: {
-                quotes: 'single',
-                minimal: true
-            }
-        }, texts)
-        writeFileSync(filePath, code)
-        console.log(parseExpression(mock), 'mock')
     }
 
     // 更新单条
@@ -152,7 +94,7 @@ export class Workbench {
     }
 
     // 处理等待数据
-    public handlePendingData(data: PendingData[]) {
+    public handlePayload(data: PayloadType[]) {
         const usableData = data.reduce<Dictionary<UsableData>>((result, item) => {
             const { key, insertPath, languages } = item
             const rootKey = key.split('.')[0]
