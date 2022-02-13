@@ -16,7 +16,7 @@ export class EcmascriptParser {
         public readonly id: 'js' | 'ts' = 'js'
     ) { }
 
-    async load(filepath: string) {
+    async load(filepath: string): Promise<object> {
         const document = await workspace.openTextDocument(filepath)
         const texts = await document.getText()
         if (!texts) return {}

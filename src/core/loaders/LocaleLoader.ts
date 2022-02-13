@@ -116,7 +116,7 @@ export class LocaleLoader extends Loader {
             const { originLocale, locale, filePath, parser } = result
             if (!locale || !parser) return
             const value = await parser.load(filePath)
-            const flattenValue = flatten(value)
+            const flattenValue = flatten<object, object>(value)
             this._files[filePath] = {
                 originLocale,
                 locale,

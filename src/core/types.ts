@@ -25,8 +25,8 @@ export interface ParsedFile {
     locale: string
     filePath: string
     dirPath: string
-    unflattenValue: string
-    flattenValue: unknown
+    unflattenValue: object
+    flattenValue: object
 }
 
 export interface PayloadType {
@@ -35,7 +35,7 @@ export interface PayloadType {
     languages: Dictionary<string>
 }
 
-export interface UsableData {
+export interface PayloadParsedType {
     rootKeys: string[]
     unFlattenData: object
     flattenData: Dictionary<string>
