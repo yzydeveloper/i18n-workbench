@@ -16,7 +16,8 @@
                     <input class="input"
                            v-model="item.key">
                     <div class="buttons">
-                        <div class="button">翻译</div>
+                        <div class="button"
+                             @click="translate(item,index)">翻译</div>
                     </div>
                 </div>
                 <div class="editor-core"
@@ -46,16 +47,44 @@
     </div>
 </template>
 <script lang="ts">
-import { useWorkbenchStore } from './useWorkbenchStore'
+import type { PayloadType } from './../core'
+import { EventTypes } from './events'
+import { vscode, useWorkbenchStore } from './useWorkbenchStore'
 export default {
     setup() {
-        const { dirStructure, allLocales, languageMapFile, payload }
-            = useWorkbenchStore()
+        const {
+            dirStructure,
+            allLocales,
+            languageMapFile,
+            sourceLanguage,
+            payload,
+        } = useWorkbenchStore()
+
+        function save() {
+            vscode.postMessage({
+                type: EventTypes.SAVE,
+                data: JSON.stringify(payload.value),
+            })
+        }
+
+        function translate(item: PayloadType, index: number) {
+            const text = item.languages[sourceLanguage.value as string]
+            vscode.postMessage({
+                type: EventTypes.TRANSLATE_SINGLE,
+                data: {
+                    index,
+                    text,
+                },
+            })
+        }
         return {
             dirStructure,
             allLocales,
             languageMapFile,
+            sourceLanguage,
             payload,
+            save,
+            translate,
         }
     },
 }

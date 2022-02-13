@@ -2,8 +2,6 @@ import type { DirStructure, PayloadType } from './../core'
 import { ComputedRef } from 'vue'
 import { reactive, toRefs, computed } from 'vue'
 import { EventTypes } from './events'
-const vscode = window.acquireVsCodeApi()
-
 interface WorkbenchStore {
     config: {
         allLocales: string[]
@@ -18,6 +16,8 @@ interface WorkbenchStore {
     languageMapFile: Partial<ComputedRef<Record<string, string[]>>>
     payload: Partial<ComputedRef<PayloadType[]>>
 }
+
+export const vscode = window.acquireVsCodeApi()
 
 export const store: WorkbenchStore = reactive<WorkbenchStore>({
     config: {
@@ -35,6 +35,10 @@ export const store: WorkbenchStore = reactive<WorkbenchStore>({
 })
 
 export function useWorkbenchStore() {
+    function effectView(message: any) {
+        const { value, index } = message.data
+        store.config.payload[index].languages = value
+    }
     vscode.postMessage({ type: EventTypes.READY })
     window.addEventListener('message', (event) => {
         const message = event.data
@@ -43,7 +47,7 @@ export function useWorkbenchStore() {
                 store.config = message.data
                 break
             case EventTypes.TRANSLATE_SINGLE:
-
+                effectView(message)
                 break
             default:
                 break
