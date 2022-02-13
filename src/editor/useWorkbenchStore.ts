@@ -1,29 +1,37 @@
-import type { DirStructure } from './../core'
-import type { ComputedRef } from 'vue'
-import { reactive, computed } from 'vue'
+import type { DirStructure, PayloadType } from './../core'
+import { ComputedRef } from 'vue'
+import { reactive, toRefs, computed } from 'vue'
 import { EventTypes } from './events'
 const vscode = window.acquireVsCodeApi()
 
 interface WorkbenchStore {
     config: {
         allLocales: string[]
-        sourceLanguage: string
         dirStructure: DirStructure
+        sourceLanguage: string
+        languageMapFile: Record<string, string[]>
+        payload: PayloadType[]
     }
     allLocales: Partial<ComputedRef<string[]>>
-    sourceLanguage: Partial<ComputedRef<string>>
     dirStructure: Partial<ComputedRef<DirStructure>>
+    sourceLanguage: Partial<ComputedRef<string>>
+    languageMapFile: Partial<ComputedRef<Record<string, string[]>>>
+    payload: Partial<ComputedRef<PayloadType[]>>
 }
 
 export const store: WorkbenchStore = reactive<WorkbenchStore>({
     config: {
         allLocales: [],
+        dirStructure: '',
         sourceLanguage: '',
-        dirStructure: ''
+        languageMapFile: {},
+        payload: []
     },
     allLocales: computed(() => store.config.allLocales),
     sourceLanguage: computed(() => store.config.sourceLanguage),
     dirStructure: computed(() => store.config.dirStructure),
+    languageMapFile: computed(() => store.config.languageMapFile),
+    payload: computed(() => store.config.payload),
 })
 
 export function useWorkbenchStore() {
@@ -41,4 +49,7 @@ export function useWorkbenchStore() {
                 break
         }
     })
+    return {
+        ...toRefs(store)
+    }
 }

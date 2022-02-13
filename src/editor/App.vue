@@ -1,14 +1,62 @@
 <template>
     <div id="workbench">
-        workbench
+        <div class="workbench-content">
+            <div class="workbench-content-header">
+                <div class="button save-button"
+                     @click="save">
+                    保存到文件
+                </div>
+            </div>
+            <div v-for="(item,index) in payload"
+                 :key="index"
+                 class="workbench-content-editor">
+                <div class="editor-header"></div>
+                <div class="editor-title">
+                    <span>Key：</span>
+                    <input class="input"
+                           v-model="item.key">
+                    <div class="buttons">
+                        <div class="button">翻译</div>
+                    </div>
+                </div>
+                <div class="editor-core"
+                     v-for="(locale,index) in allLocales"
+                     :key="index">
+                    <div class="editor-core-translate">{{ locale }}</div>
+                    <div class="editor-core-content">
+                        <input class="input"
+                               v-model="item.languages[locale]">
+                    </div>
+                    <div class="editor-core-path"
+                         v-if="dirStructure==='dir'">
+                        <select class="select"
+                                :title="item.insertPath[locale]"
+                                v-model="item.insertPath[locale]">
+                            <option class="option"
+                                    :value="path"
+                                    v-for="path in languageMapFile[locale]"
+                                    :key="path">
+                                {{ path }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script lang="ts">
 import { useWorkbenchStore } from './useWorkbenchStore'
 export default {
     setup() {
-        useWorkbenchStore()
-        return {}
+        const { dirStructure, allLocales, languageMapFile, payload }
+            = useWorkbenchStore()
+        return {
+            dirStructure,
+            allLocales,
+            languageMapFile,
+            payload,
+        }
     },
 }
 </script>
