@@ -6,8 +6,5 @@ export class EcmascriptInserter extends Inserter {
         super()
     }
 
-    insert(filepath: string) {
-        console.log(filepath, '[filepath]')
-        return Promise.resolve({})
-    }
+    insert(filepath: string, value: object) { }
 }

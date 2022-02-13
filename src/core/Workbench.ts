@@ -1,11 +1,13 @@
 import type { WebviewPanel } from 'vscode'
-import type { PayloadType, UsableData, Dictionary } from './types'
-import { join } from 'path'
+import type { PayloadType, PayloadParsedType, Dictionary } from './types'
+import type { InserterSupportType } from './../inserter/base'
+import { join, extname } from 'path'
 import { window, ViewColumn, Uri, Disposable } from 'vscode'
-import { findLanguage, getHtmlForWebview } from './../utils'
-import { unflatten } from 'flat'
-import { Global, CurrentFile } from '.'
 import Config from './Config'
+import { Global, CurrentFile } from '.'
+import { Inserter } from './../inserter'
+import { unflatten } from 'flat'
+import { findLanguage, getHtmlForWebview } from './../utils'
 
 export interface Message {
     type: string | number
@@ -75,9 +77,14 @@ export class Workbench {
 
     // 保存到文件
     public async saveToFile(data: Message['data']) {
-        const payload: PayloadType[] = JSON.parse(data)
-        const usableData = this.handlePayload(payload)
-        console.log(usableData, 'usableData')
+        const parsePayload: PayloadType[] = JSON.parse(data)
+        const payload = this.handlePayload(parsePayload)
+        const files = Object.keys(payload)
+        for (let index = 0; index < files.length; index++) {
+            const file = files[index]
+            const { flattenData } = payload[file]
+            Inserter.insert(extname(file) as InserterSupportType, file, flattenData)
+        }
     }
 
     // 更新单条
@@ -95,7 +102,7 @@ export class Workbench {
 
     // 处理等待数据
     public handlePayload(data: PayloadType[]) {
-        const usableData = data.reduce<Dictionary<UsableData>>((result, item) => {
+        const payloadParsed = data.reduce<Dictionary<PayloadParsedType>>((result, item) => {
             const { key, insertPath, languages } = item
             const rootKey = key.split('.')[0]
             if (key && rootKey) {
@@ -116,7 +123,7 @@ export class Workbench {
             }
             return result
         }, {})
-        return usableData
+        return payloadParsed
     }
 
     public dispose() {
