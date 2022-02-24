@@ -100,7 +100,9 @@ export class SfcExtractor extends ExtractorAbstract {
                         text: t,
                         start,
                         end,
-                        range
+                        range,
+                        isDynamic: true,
+                        type: 'html-attribute'
                     })
                 })
             }
@@ -120,7 +122,8 @@ export class SfcExtractor extends ExtractorAbstract {
                             text: t,
                             start,
                             end,
-                            range
+                            range,
+                            type: 'html-inline'
                         })
                     })
                 }
@@ -139,7 +142,9 @@ export class SfcExtractor extends ExtractorAbstract {
                                 text: t,
                                 start,
                                 end,
-                                range
+                                range,
+                                isDynamic: true,
+                                type: 'html-inline'
                             })
                         })
                     }
@@ -155,7 +160,7 @@ export class SfcExtractor extends ExtractorAbstract {
                         visitorAttr(inlineNode)
 
                     if (this.isProp(inlineNode)) {
-                        const { value } = inlineNode
+                        const { loc, value } = inlineNode // name="xxx"
                         if (value) {
                             const {
                                 loc: {
@@ -174,7 +179,11 @@ export class SfcExtractor extends ExtractorAbstract {
                                 text: content,
                                 start,
                                 end,
-                                range
+                                range,
+                                fullText: loc.source,
+                                fullStart: loc.start.offset,
+                                fullEnd: loc.end.offset,
+                                type: 'html-attribute'
                             })
                         }
                     }
@@ -230,7 +239,8 @@ export class SfcExtractor extends ExtractorAbstract {
                         text: value,
                         start,
                         end,
-                        range
+                        range,
+                        type: 'js-string'
                     })
                 },
                 TemplateLiteral: (path) => {
@@ -250,7 +260,8 @@ export class SfcExtractor extends ExtractorAbstract {
                                 text: t,
                                 start,
                                 end,
-                                range
+                                range,
+                                type: 'js-template'
                             })
                         })
                     })
