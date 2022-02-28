@@ -1,6 +1,6 @@
 import type { ExtensionContext, Uri } from 'vscode'
 import type { ExtractorResult } from './../extractor/base'
-import type { PayloadType } from '.'
+import type { PendingWrite } from '.'
 import { workspace, window } from 'vscode'
 import { extname } from 'path'
 import { Global } from '.'
@@ -16,17 +16,17 @@ export class CurrentFile {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
         ctx.subscriptions.push(workspace.onDidChangeTextDocument((e) => {
             if (e)
-                this.retrieveSourceLanguage()
+                this.extract()
         }))
         ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => {
             if (e) {
                 this.update(e.document.uri)
-                this.retrieveSourceLanguage()
+                this.extract()
             }
         }))
         if (window.activeTextEditor) {
             this.update(window.activeTextEditor.document.uri)
-            this.retrieveSourceLanguage()
+            this.extract()
         }
     }
 
@@ -50,12 +50,12 @@ export class CurrentFile {
         this._extractor_result = value
     }
 
-    static get payload() {
+    static get pendingWrite() {
         const { allLocales } = Global.loader
         const from = findLanguage(Config.sourceLanguage)
 
-        return this.extractor_result.reduce<PayloadType[]>((result, item) => {
-            const languages = allLocales.reduce<PayloadType['languages']>((_, locale) => {
+        return this.extractor_result.reduce<PendingWrite[]>((result, item) => {
+            const languages = allLocales.reduce<PendingWrite['languages']>((_, locale) => {
                 _[locale] = locale === from ? item.text : ''
                 return _
             }, {})
@@ -72,7 +72,7 @@ export class CurrentFile {
     /**
      * @param currentEditor
      */
-    static async retrieveSourceLanguage() {
+    static async extract() {
         if (this._extractor) {
             const result = await this._extractor.extract({
                 id: this.id

@@ -7,7 +7,7 @@
                     保存到文件
                 </div>
             </div>
-            <div v-for="(item,index) in payload"
+            <div v-for="(item,index) in pendingWrite"
                  :key="index"
                  class="workbench-content-editor">
                 <div class="editor-header"></div>
@@ -47,7 +47,7 @@
     </div>
 </template>
 <script lang="ts">
-import type { PayloadType } from './../core'
+import type { PendingWrite } from './../core'
 import { EventTypes } from './events'
 import { vscode, useWorkbenchStore } from './useWorkbenchStore'
 export default {
@@ -57,17 +57,17 @@ export default {
             allLocales,
             languageMapFile,
             sourceLanguage,
-            payload,
+            pendingWrite,
         } = useWorkbenchStore()
 
         function save() {
             vscode.postMessage({
                 type: EventTypes.SAVE,
-                data: JSON.stringify(payload.value),
+                data: JSON.stringify(pendingWrite.value),
             })
         }
 
-        function translate(item: PayloadType, index: number) {
+        function translate(item: PendingWrite, index: number) {
             const text = item.languages[sourceLanguage.value as string]
             vscode.postMessage({
                 type: EventTypes.TRANSLATE_SINGLE,
@@ -82,7 +82,7 @@ export default {
             allLocales,
             languageMapFile,
             sourceLanguage,
-            payload,
+            pendingWrite,
             save,
             translate,
         }

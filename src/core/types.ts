@@ -29,13 +29,13 @@ export interface ParsedFile {
     flattenValue: object
 }
 
-export interface PayloadType {
+export interface PendingWrite { // PendingWrite
     key: string
     insertPath: string | Dictionary<string> // 写入的文件，对应语言环境或者语言类型
     languages: Dictionary<string>
 }
 
-export interface PayloadParsedType {
+export interface PendingWriteParsed {
     rootKeys: string[]
     unFlattenData: object
     flattenData: Dictionary<string>

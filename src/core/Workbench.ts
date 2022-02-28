@@ -1,5 +1,5 @@
 import type { WebviewPanel } from 'vscode'
-import type { PayloadType, PayloadParsedType, Dictionary } from './types'
+import type { PendingWrite, PendingWriteParsed, Dictionary } from './types'
 import type { InserterSupportType } from './../inserter/base'
 import { join, extname } from 'path'
 import { window, ViewColumn, Uri, Disposable } from 'vscode'
@@ -27,13 +27,13 @@ export class Workbench {
     private get config() {
         const { loader } = Global
         const { allLocales, languageMapFile, dirStructure } = loader
-        const { payload } = CurrentFile
+        const { pendingWrite } = CurrentFile
         return {
             dirStructure,
             allLocales,
             languageMapFile,
             sourceLanguage: findLanguage(Config.sourceLanguage),
-            payload
+            pendingWrite
         }
     }
 
@@ -77,12 +77,12 @@ export class Workbench {
 
     // 保存到文件
     public async saveToFile(data: Message['data']) {
-        const parsePayload: PayloadType[] = JSON.parse(data)
-        const payload = this.handlePayload(parsePayload)
-        const files = Object.keys(payload)
+        const temp: PendingWrite[] = JSON.parse(data)
+        const pendingWrite = this.handlePendingWrite(temp)
+        const files = Object.keys(pendingWrite)
         for (let index = 0; index < files.length; index++) {
             const file = files[index]
-            const { flattenData } = payload[file]
+            const { flattenData } = pendingWrite[file]
             Inserter.insert(extname(file) as InserterSupportType, file, flattenData)
         }
     }
@@ -101,8 +101,8 @@ export class Workbench {
     }
 
     // 处理等待数据
-    public handlePayload(data: PayloadType[]) {
-        const payloadParsed = data.reduce<Dictionary<PayloadParsedType>>((result, item) => {
+    public handlePendingWrite(data: PendingWrite[]) {
+        const pendingWriteParsed = data.reduce<Dictionary<PendingWriteParsed>>((result, item) => {
             const { key, insertPath, languages } = item
             const rootKey = key.split('.')[0]
             if (key && rootKey) {
@@ -123,7 +123,7 @@ export class Workbench {
             }
             return result
         }, {})
-        return payloadParsed
+        return pendingWriteParsed
     }
 
     public dispose() {
