@@ -1,13 +1,16 @@
 import type { ExtensionContext, Uri } from 'vscode'
 import type { ExtractorResult } from './../extractor/base'
-import type { PendingWrite } from '.'
+import type { Dictionary, PendingWrite, PendingWriteParsed } from '.'
+import type { InserterSupportType } from './../inserter/base'
 import { workspace, window } from 'vscode'
 import { extname } from 'path'
+import { unflatten } from 'flat'
 import { Global } from '.'
 import Config from './Config'
 import { findLanguage } from './../utils'
 import { Extractor } from './../extractor'
 import { Translator } from './Translator'
+import { Inserter } from './../inserter'
 export class CurrentFile {
     static uri: Uri | undefined
     static _extractor: Extractor | null = null
@@ -81,8 +84,40 @@ export class CurrentFile {
         }
     }
 
-    static write() {
+    static write(data: any) {
+        const temp: PendingWrite[] = JSON.parse(data)
+        const pendingWrite = this.handlePendingWrite(temp)
+        const files = Object.keys(pendingWrite)
+        for (let index = 0; index < files.length; index++) {
+            const file = files[index]
+            const { flattenData } = pendingWrite[file]
+            Inserter.insert(extname(file) as InserterSupportType, file, flattenData)
+        }
+    }
 
+    static handlePendingWrite(data: PendingWrite[]) {
+        const pendingWriteParsed = data.reduce<Dictionary<PendingWriteParsed>>((result, item) => {
+            const { key, insertPath, languages } = item
+            const rootKey = key.split('.')[0]
+            if (key && rootKey) {
+                Object.keys(item.insertPath).forEach(locale => {
+                    if (typeof insertPath === 'object') {
+                        if (!result[insertPath[locale]]) {
+                            result[insertPath[locale]] = {
+                                rootKeys: [],
+                                unFlattenData: {},
+                                flattenData: {}
+                            }
+                        }
+                        result[insertPath[locale]].rootKeys.push(rootKey)
+                        result[insertPath[locale]].flattenData[key] = languages[locale]
+                        result[insertPath[locale]].unFlattenData = unflatten(result[insertPath[locale]].flattenData)
+                    }
+                })
+            }
+            return result
+        }, {})
+        return pendingWriteParsed
     }
 
     static async translateSingle(text: string) {

@@ -29,7 +29,7 @@ export interface ParsedFile {
     flattenValue: object
 }
 
-export interface PendingWrite { // PendingWrite
+export interface PendingWrite {
     key: string
     insertPath: string | Dictionary<string> // 写入的文件，对应语言环境或者语言类型
     languages: Dictionary<string>

@@ -1,12 +1,8 @@
 import type { WebviewPanel } from 'vscode'
-import type { PendingWrite, PendingWriteParsed, Dictionary } from './types'
-import type { InserterSupportType } from './../inserter/base'
-import { join, extname } from 'path'
+import { join } from 'path'
 import { window, ViewColumn, Uri, Disposable } from 'vscode'
 import Config from './Config'
 import { Global, CurrentFile } from '.'
-import { Inserter } from './../inserter'
-import { unflatten } from 'flat'
 import { findLanguage, getHtmlForWebview } from './../utils'
 
 export interface Message {
@@ -48,7 +44,7 @@ export class Workbench {
 
                 break
             case EventTypes.SAVE:
-                this.saveToFile(data)
+                CurrentFile.write(data)
                 break
             case EventTypes.TRANSLATE_SINGLE:
                 this.translateSignal(data)
@@ -75,18 +71,6 @@ export class Workbench {
         return Workbench.workbench
     }
 
-    // 保存到文件
-    public async saveToFile(data: Message['data']) {
-        const temp: PendingWrite[] = JSON.parse(data)
-        const pendingWrite = this.handlePendingWrite(temp)
-        const files = Object.keys(pendingWrite)
-        for (let index = 0; index < files.length; index++) {
-            const file = files[index]
-            const { flattenData } = pendingWrite[file]
-            Inserter.insert(extname(file) as InserterSupportType, file, flattenData)
-        }
-    }
-
     // 更新单条
     public async translateSignal(data: Message['data']) {
         const { text, index } = data
@@ -98,32 +82,6 @@ export class Workbench {
                 value: r
             }
         })
-    }
-
-    // 处理等待数据
-    public handlePendingWrite(data: PendingWrite[]) {
-        const pendingWriteParsed = data.reduce<Dictionary<PendingWriteParsed>>((result, item) => {
-            const { key, insertPath, languages } = item
-            const rootKey = key.split('.')[0]
-            if (key && rootKey) {
-                Object.keys(item.insertPath).forEach(locale => {
-                    if (typeof insertPath === 'object') {
-                        if (!result[insertPath[locale]]) {
-                            result[insertPath[locale]] = {
-                                rootKeys: [],
-                                unFlattenData: {},
-                                flattenData: {}
-                            }
-                        }
-                        result[insertPath[locale]].rootKeys.push(rootKey)
-                        result[insertPath[locale]].flattenData[key] = languages[locale]
-                        result[insertPath[locale]].unFlattenData = unflatten(result[insertPath[locale]].flattenData)
-                    }
-                })
-            }
-            return result
-        }, {})
-        return pendingWriteParsed
     }
 
     public dispose() {
