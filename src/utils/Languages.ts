@@ -4,7 +4,7 @@ export const Languages: {
 } = {
     'zh-CN|zh-cn|zh|ZH|cn|CN': 'zh-CN',
     'zh-TW|zh-HK|zh-hk|zh-tw|hk|tw|TW': 'zh-TW',
-    'en': 'en',
+    'en|en-US': 'en',
     'co': 'co',
     'hr': 'hr',
     'cs': 'cs',
@@ -110,7 +110,7 @@ export const Languages: {
 
 export const findLanguage = (lang: string) => {
     const result = Object.keys(Languages).find(match => {
-        return new RegExp(match, 'i').test(lang)
+        return new RegExp(`^(${match})$`, 'i').test(lang)
     })
     if (result)
         return Languages[result]
