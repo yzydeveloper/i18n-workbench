@@ -15,7 +15,7 @@
                     <span>Key：</span>
                     <input class="input"
                            v-model="item.key">
-                    <div class="buttons">
+                    <div class="button-group">
                         <div class="button"
                              @click="translate(item,index)">翻译</div>
                     </div>
@@ -93,7 +93,7 @@ export default {
 .select {
     width: 120px;
     cursor: pointer;
-    background: var(--vscode-focusBorder);
+    background: var(--vscode-input-background);
     padding: unset;
     border: none;
     color: var(--vscode-forground);
@@ -104,8 +104,11 @@ export default {
     outline: none;
     box-shadow: none;
 }
+.option {
+    background: var(--vscode-inputOption-activeBackground);
+}
 
-.buttons {
+.button-group {
     display: flex;
     align-items: center;
     margin-left: 8px;
@@ -214,5 +217,10 @@ export default {
     display: flex;
     align-items: center;
     flex: 1;
+}
+
+.editor-core-path {
+    display: flex;
+    align-items: center;
 }
 </style>
