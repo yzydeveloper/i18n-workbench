@@ -1,8 +1,8 @@
 {
 	"publisher": "yzydeveloper",
-	"name": "hero-i18n",
-	"displayName": "Hero i18n",
-	"description": "This is a hero",
+	"name": "i18n-workbench",
+	"displayName": "I18n Workbench",
+	"description": "I18n Workbench",
 	"version": "0.0.1",
 	"license": "MIT",
 	"engines": {
@@ -30,9 +30,9 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/yzydeveloper/hero-i18n"
+		"url": "https://github.com/yzydeveloper/i18n-workbench"
 	},
-	"homepage": "https://github.com/yzydeveloper/hero-i18n",
+	"homepage": "https://github.com/yzydeveloper/i18n-workbench",
 	"dependencies": {
 		"@babel/core": "^7.15.8",
 		"@babel/generator": "^7.15.8",
@@ -65,32 +65,32 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "hero-i18n.config-locales",
+				"command": "i18n-workbench.config-locales",
 				"title": "手动设置语言目录"
 			},
 			{
-				"command": "hero-i18n.config-locales-auto",
+				"command": "i18n-workbench.config-locales-auto",
 				"title": "自动设置语言目录"
 			},
 			{
-				"command": "hero-i18n.open-workbench",
+				"command": "i18n-workbench.open-workbench",
 				"title": "打开翻译工作台"
 			}
 		],
 		"configuration": {
 			"type": "object",
-			"title": "hero-i18n",
+			"title": "i18n-workbench",
 			"properties": {
-				"hero-i18n.localesPath": {
+				"i18n-workbench.localesPath": {
 					"type": "string",
 					"description": "翻译文件的目录（相对于项目根目录）"
 				},
-				"hero-i18n.translate-apiRoot": {
+				"i18n-workbench.translate-apiRoot": {
 					"type": "string",
 					"default": "http://localhost:5000",
 					"description": ""
 				},
-				"hero-i18n.translate-engines": {
+				"i18n-workbench.translate-engines": {
 					"type": "array",
 					"items": {
 						"type": "string",
@@ -105,17 +105,17 @@
 					},
 					"description": "翻译服务提供商"
 				},
-				"hero-i18n.sourceLanguage": {
+				"i18n-workbench.sourceLanguage": {
 					"type": "string",
 					"default": "zh-CN",
 					"description": "翻译源语言"
 				},
-				"hero-i18n.namespace": {
+				"i18n-workbench.namespace": {
 					"type": "boolean",
 					"default": false,
 					"description": "启用命名空间"
 				},
-				"hero-i18n.ignoreFiles": {
+				"i18n-workbench.ignoreFiles": {
 					"type": "array",
 					"item": {
 						"type": "string"
