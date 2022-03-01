@@ -2,19 +2,18 @@ import { ExtensionContext } from 'vscode'
 import { EXT_NAMESPACE } from './meta'
 import Config from './core/Config'
 import { CurrentFile, Global } from './core'
-Config.extName = EXT_NAMESPACE
 import { Log } from './utils'
-import ExtractCommand from './commands/extract'
-import ConfigLocaleCommand from './commands/configLocalePaths'
+import registerCommand from './commands'
 
 export function activate(context: ExtensionContext) {
-    Log.info(`🌞 ${Config.extensionName} Activated`)
+    Config.extName = EXT_NAMESPACE
     Config.ctx = context
+    Log.info(`🌞 ${Config.extensionName} Activated`)
+
     Global.init(context)
     CurrentFile.watch(context)
 
-    ExtractCommand(context)
-    ConfigLocaleCommand(context)
+    registerCommand(context)
 }
 
 // 扩展被停用时
