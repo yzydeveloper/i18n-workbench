@@ -13,7 +13,6 @@ import {
 } from '@vue/compiler-core'
 import { ParserPlugin, parse as babelParse } from '@babel/parser'
 import traverse from '@babel/traverse'
-import { CHINESE_REGEX } from './../meta'
 
 export class SfcExtractor extends ExtractorAbstract {
     public readonly id = 'vue'
@@ -74,10 +73,6 @@ export class SfcExtractor extends ExtractorAbstract {
         return p.type === 4
     }
 
-    splitTemplateLiteral(content: string): string[] {
-        return content.match(CHINESE_REGEX) ?? []
-    }
-
     parseTemplateText(templateNode: TemplateChildNode) {
         const { document } = this
         if (!document) return []
@@ -110,7 +105,8 @@ export class SfcExtractor extends ExtractorAbstract {
         const visitor = (node: TemplateChildNode) => {
             if (isText(node)) {
                 if (!this.isInterPolation(node)) {
-                    this.splitTemplateLiteral(node.content).forEach(t => {
+                    // source中包含\n
+                    this.splitTextLiteral(node.loc.source).forEach(t => {
                         const start = source.indexOf(t)
                         const end = start + t.length
                         const range = new Range(
@@ -148,10 +144,6 @@ export class SfcExtractor extends ExtractorAbstract {
                             })
                         })
                     }
-
-                    // TODO
-                    // if(this.isCompoundExpression(node.content)) {
-                    // }
                 }
             }
             if (node.type === 1) {
