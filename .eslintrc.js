@@ -76,9 +76,11 @@ module.exports = {
                 'import/no-self-import': 'off',
                 'import/no-useless-path-segments': 'off',
                 'class-methods-use-this': 'off',
-                'max-classes-per-file': 'off',
-                '@typescript-eslint/indent': ['error', 4],
+                'max-classes-per-file': 'off'
             },
         },
     ],
+    rules: {
+        '@typescript-eslint/indent': ['error', 4],
+    }
 }
