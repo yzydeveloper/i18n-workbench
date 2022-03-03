@@ -75,6 +75,10 @@
 			{
 				"command": "i18n-workbench.open-workbench",
 				"title": "打开翻译工作台"
+			},
+			{
+				"command": "i18n-workbench.replace-with",
+				"title": "替换当前文档"
 			}
 		],
 		"configuration": {
