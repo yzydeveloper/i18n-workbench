@@ -16,6 +16,12 @@ import traverse from '@babel/traverse'
 
 export class SfcExtractor extends ExtractorAbstract {
     public readonly id = 'vue'
+    public readonly extractorRuleOptions = {
+        importanceAttributes: ['title', 'name', 'label', 'placeholder', 'tooltip', 'tip'],
+        ignoreAttributes: ['class', 'id', 'style'],
+        importanceBind: ['title', 'name', 'label', 'placeholder', 'tooltip', 'tip'],
+        ignoreBind: []
+    }
 
     async extractor(): Promise<ExtractorResult[]> {
         this.document = await workspace.openTextDocument(this.uri)
@@ -58,11 +64,11 @@ export class SfcExtractor extends ExtractorAbstract {
     }
 
     isVBind(p: ElementNode['props'][0]): p is DirectiveNode {
-        return p.type === 7 && p.name === 'bind'
+        return p.type === 7
     }
 
     isProp(p: ElementNode['props'][0]): p is AttributeNode {
-        return p.type === 6 && !['class', 'id'].includes(p.name)
+        return p.type === 6
     }
 
     isInterPolation(p: TemplateChildNode): p is InterpolationNode {
@@ -133,6 +139,8 @@ export class SfcExtractor extends ExtractorAbstract {
                                 document.positionAt(start),
                                 document.positionAt(end)
                             )
+                            // 如果匹配的模板字符中包含当前解析的字符说明类型是 html-inline-template
+                            const isHtmlInlineTemplate = source.match(/(?<=`).*?(?=`)/gs)?.some(i => i.includes(content))
                             words.push({
                                 id: this.id,
                                 text: t,
@@ -140,7 +148,7 @@ export class SfcExtractor extends ExtractorAbstract {
                                 end,
                                 range,
                                 isDynamic: true,
-                                type: 'html-inline'
+                                type: !isHtmlInlineTemplate ? 'html-inline-template' : 'html-inline'
                             })
                         })
                     }
@@ -148,10 +156,13 @@ export class SfcExtractor extends ExtractorAbstract {
             }
             if (node.type === 1) {
                 node.props.forEach(inlineNode => {
-                    if (this.isVBind(inlineNode))
+                    if (this.isVBind(inlineNode)) {
+                        if (!this.extractorRuleOptions.importanceBind.includes(inlineNode.name)) return
                         visitorAttr(inlineNode)
+                    }
 
                     if (this.isProp(inlineNode)) {
+                        if (!this.extractorRuleOptions.importanceAttributes.includes(inlineNode.name)) return
                         const { loc, value } = inlineNode // name="xxx"
                         if (value) {
                             const {

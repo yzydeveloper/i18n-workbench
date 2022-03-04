@@ -4,11 +4,13 @@ import { window } from 'vscode'
 import { QUOTES_CHARACTER, TEMPLATE_CHARACTER, NON_ASCII_CHARACTERS, LETTER } from './../meta'
 
 export type ExtractorId = 'vue'
-export type ExtractorType = 'html-attribute' | 'html-inline' | 'js-string' | 'js-template' | 'jsx-text'
+
+export type ExtractorType = 'html-attribute' | 'html-inline' | 'html-inline-template' | 'js-string' | 'js-template' | 'jsx-text'
 export interface ExtractorOptions {
     id: string
     uri?: Uri
 }
+
 export interface ExtractorResult {
     id: ExtractorId
     text: string
@@ -21,10 +23,21 @@ export interface ExtractorResult {
     fullEnd?: number
     type: ExtractorType
 }
+
+export interface ExtractorRuleOptions {
+    importanceAttributes: string[]
+    ignoreAttributes: string[]
+    importanceBind: string[]
+    ignoreBind: string[]
+}
+
 export default abstract class ExtractorAbstract {
     constructor(
         public readonly uri: Uri
     ) { }
+
+    abstract readonly id: string
+    abstract readonly extractorRuleOptions: ExtractorRuleOptions
 
     get filepath() {
         return this.uri.fsPath
