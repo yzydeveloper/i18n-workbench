@@ -68,7 +68,7 @@ export class LocaleLoader extends Loader {
     // { text: [keypath] }
     get textMappingKey() {
         const from = findLanguage(Config.sourceLanguage)
-        return Object.keys(this.files).reduce<Record<string, []>>((result, key) => {
+        return Object.keys(this.files).reduce<Record<string, string[]>>((result, key) => {
             const { locale, flattenValue, group } = this.files[key]
             if (locale === from) {
                 Object.keys(flattenValue).forEach(keypath => {
