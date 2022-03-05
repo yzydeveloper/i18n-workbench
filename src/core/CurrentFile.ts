@@ -18,8 +18,10 @@ export class CurrentFile {
     static watch(ctx: ExtensionContext) {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
         ctx.subscriptions.push(workspace.onDidChangeTextDocument((e) => {
-            if (e)
+            if (e) {
+                this.update(e.document.uri)
                 this.extract()
+            }
         }))
         ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => {
             if (e) {
@@ -78,7 +80,8 @@ export class CurrentFile {
     static async extract() {
         if (this._extractor) {
             const result = await this._extractor.extract({
-                id: this.id
+                id: this.id,
+                uri: this.uri
             })
             this.extractorResult = result
         }

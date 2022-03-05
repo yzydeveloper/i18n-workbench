@@ -1,4 +1,4 @@
-import ExtractorAbstract, { ExtractorResult } from './base'
+import ExtractorAbstract, { ExtractorOptions, ExtractorResult } from './base'
 import { workspace, Range } from 'vscode'
 import {
     TemplateChildNode,
@@ -24,8 +24,8 @@ export class SfcExtractor extends ExtractorAbstract {
         ignoreBind: []
     }
 
-    async extractor(): Promise<ExtractorResult[]> {
-        this.document = await workspace.openTextDocument(this.uri)
+    async extractor({ uri }: ExtractorOptions): Promise<ExtractorResult[]> {
+        this.document = await workspace.openTextDocument(uri || this.uri)
         const code = this.document.getText()
         const ast = parse(code, {
             getTextMode: ({ tag, props }, parent) => {
