@@ -45,11 +45,11 @@ export class CurrentFile {
         return ''
     }
 
-    static get extractor_result() {
+    static get extractorResult() {
         return this._extractor_result
     }
 
-    static set extractor_result(value) {
+    static set extractorResult(value) {
         this._extractor_result = value
     }
 
@@ -57,7 +57,7 @@ export class CurrentFile {
         const { allLocales } = Global.loader
         const from = findLanguage(Config.sourceLanguage)
 
-        return this.extractor_result.reduce<PendingWrite[]>((result, item) => {
+        return this.extractorResult.reduce<PendingWrite[]>((result, item) => {
             const languages = allLocales.reduce<PendingWrite['languages']>((_, locale) => {
                 _[locale] = locale === from ? item.text : ''
                 return _
@@ -80,7 +80,7 @@ export class CurrentFile {
             const result = await this._extractor.extract({
                 id: this.id
             })
-            this.extractor_result = result
+            this.extractorResult = result
         }
     }
 
