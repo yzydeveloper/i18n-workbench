@@ -1,12 +1,4 @@
-import type { ExtensionContext, Disposable } from 'vscode'
-
-export type Partial<T> = {
-    [K in keyof T]?: T[K]
-}
-
-export type Readonly<T> = {
-    readonly [P in keyof T]: T[P]
-}
+import type { ExtensionContext, Disposable, Range } from 'vscode'
 
 export type Dictionary<T> = {
     [key: string]: T
@@ -39,4 +31,11 @@ export interface PendingWriteParsed {
     rootKeys: string[]
     unFlattenData: object
     flattenData: Dictionary<string>
+}
+
+export interface RefactorTextResult {
+    text: string
+    start: number
+    end: number
+    range: Range
 }
