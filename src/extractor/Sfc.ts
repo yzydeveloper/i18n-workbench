@@ -13,6 +13,7 @@ import {
 } from '@vue/compiler-core'
 import { ParserPlugin, parse as babelParse } from '@babel/parser'
 import traverse from '@babel/traverse'
+import { TEMPLATE_STRING } from './../meta'
 
 export class SfcExtractor extends ExtractorAbstract {
     public readonly id = 'vue'
@@ -140,7 +141,7 @@ export class SfcExtractor extends ExtractorAbstract {
                                 document.positionAt(end)
                             )
                             // 如果匹配的模板字符中包含当前解析的字符说明类型是 html-inline-template
-                            const isHtmlInlineTemplate = source.match(/(?<=`).*?(?=`)/gs)?.some(i => i.includes(content))
+                            const isHtmlInlineTemplate = source.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(content))
                             words.push({
                                 id: this.id,
                                 text: t,
@@ -148,7 +149,7 @@ export class SfcExtractor extends ExtractorAbstract {
                                 end,
                                 range,
                                 isDynamic: true,
-                                type: !isHtmlInlineTemplate ? 'html-inline-template' : 'html-inline'
+                                type: isHtmlInlineTemplate ? 'html-inline-template' : 'html-inline'
                             })
                         })
                     }

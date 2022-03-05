@@ -1,7 +1,7 @@
 
 import type { Uri, Range, TextDocument } from 'vscode'
 import { window } from 'vscode'
-import { QUOTES_CHARACTER, TEMPLATE_CHARACTER, NON_ASCII_CHARACTERS, LETTER } from './../meta'
+import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, NON_ASCII_CHARACTERS, LETTER } from './../meta'
 
 export type ExtractorId = 'vue'
 
@@ -59,7 +59,7 @@ export default abstract class ExtractorAbstract {
         const $2 = content
             .replace(/`/g, '')
             .replace(QUOTES_CHARACTER, '')
-            .replace(TEMPLATE_CHARACTER, '')
+            .replace(TEMPLATE_INNER_SYMBOL, '')
             .split(/\n/g).map(i => i.trim()).filter(Boolean)
 
         // 过滤合并后不符条件得数据
