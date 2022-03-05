@@ -1,5 +1,5 @@
 import type { ParsedFile, DirStructure } from '..'
-import { resolve, extname } from 'path'
+import { resolve, extname, basename } from 'path'
 import fg from 'fast-glob'
 import { flatten } from 'flat'
 import { Loader } from './Loader'
@@ -92,6 +92,7 @@ export class LocaleLoader extends Loader {
     private getFileInfo(dirPath: string, relativePath: string) {
         const fullpath = resolve(dirPath, relativePath)
         const ext = extname(relativePath)
+        const group = basename(relativePath).replace(ext, '')
 
         const matcher = this._path_matcher
         const match = matcher.exec(relativePath)
@@ -104,7 +105,8 @@ export class LocaleLoader extends Loader {
         return {
             originLocale: locale,
             locale: findLanguage(locale),
-            filePath: fullpath,
+            group,
+            filepath: fullpath,
             parser,
         }
     }
@@ -113,14 +115,15 @@ export class LocaleLoader extends Loader {
         try {
             const result = this.getFileInfo(dirPath, relativePath)
             if (!result) return
-            const { originLocale, locale, filePath, parser } = result
+            const { originLocale, locale, group, filepath, parser } = result
             if (!locale || !parser) return
-            const value = await parser.load(filePath)
+            const value = await parser.load(filepath)
             const flattenValue = flatten<object, object>(value)
-            this._files[filePath] = {
+            this._files[filepath] = {
                 originLocale,
                 locale,
-                filePath,
+                group,
+                filepath,
                 dirPath,
                 unflattenValue: value,
                 flattenValue

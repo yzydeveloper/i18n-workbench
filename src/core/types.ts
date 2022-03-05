@@ -15,7 +15,8 @@ export interface ExtensionModule {
 export interface ParsedFile {
     originLocale: string
     locale: string
-    filePath: string
+    group: string
+    filepath: string
     dirPath: string
     unflattenValue: object
     flattenValue: object
