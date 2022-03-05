@@ -10,19 +10,21 @@ export class Replacer {
         const { extractorResult } = CurrentFile
         const edit = new WorkspaceEdit()
 
-        this.queue = extractorResult.map(i => {
-            return refactorExtract(i)
-        })
+        for (const i of extractorResult) {
+            const task = await refactorExtract(i)
+            this.queue.push(Promise.resolve(task))
+        }
+
         Promise.all(
             this.queue
         ).then(result => {
             result.forEach(i => {
                 if (i) {
-                    const { text, range } = i
+                    const { replaceTo, range } = i
                     edit.replace(
                         document.uri,
                         range,
-                        text
+                        replaceTo
                     )
                 }
             })
