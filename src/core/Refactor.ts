@@ -4,7 +4,7 @@ import { window } from 'vscode'
 import { Global } from '.'
 
 function commit(extracted: ExtractorResult, keypath: string, caller: string) {
-    const { start, end, range, isDynamic, type } = extracted
+    const { start, end, range, isDynamic, fullStart, fullEnd, fullRange, attrName, type } = extracted
     const replaceTo = `${caller}('${keypath}')`
     let refactorTextResult: RefactorTextResult | null = {
         replaceTo,
@@ -21,7 +21,15 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
             refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
             break
         case 'html-attribute':
-
+            if (isDynamic) refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
+            if(!isDynamic && fullRange) {
+                refactorTextResult = {
+                    replaceTo: `:${attrName}="${replaceTo}"`,
+                    start: fullStart as number,
+                    end: fullEnd as number,
+                    range: fullRange
+                }
+            }
             break
         case 'js-string':
             refactorTextResult.replaceTo = `this.${replaceTo}`
