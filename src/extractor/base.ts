@@ -61,7 +61,7 @@ export default abstract class ExtractorAbstract {
         const $2 = content
             .replace(/`/g, '')
             .replace(QUOTES_CHARACTER, '')
-            .replace(TEMPLATE_INNER_SYMBOL, '')
+            .replace(TEMPLATE_INNER_SYMBOL, '\n')
             .split(/\n/g).map(i => i.trim()).filter(Boolean)
 
         // 过滤合并后不符条件得数据
