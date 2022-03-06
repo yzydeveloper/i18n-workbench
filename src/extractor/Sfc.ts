@@ -89,9 +89,9 @@ export class SfcExtractor extends ExtractorAbstract {
         const visitorAttr = (node: DirectiveNode) => {
             const exp = node.exp
             if (exp && this.isSimpleExpressionNode(exp)) {
-                const { content } = exp
+                const { loc, content } = exp
                 this.splitTemplateLiteral(content).forEach(t => {
-                    const start = source.indexOf(t)
+                    const start = source.indexOf(t, loc.start.offset)
                     const end = start + t.length
                     const range = new Range(
                         document.positionAt(start),
@@ -112,9 +112,10 @@ export class SfcExtractor extends ExtractorAbstract {
         const visitor = (node: TemplateChildNode) => {
             if (isText(node)) {
                 if (!this.isInterPolation(node)) {
-                    // source中包含\n
-                    this.splitTextLiteral(node.loc.source).forEach(t => {
-                        const start = source.indexOf(t)
+                    // source中包含 \n
+                    const { loc } = node
+                    this.splitTextLiteral(loc.source).forEach(t => {
+                        const start = source.indexOf(t, loc.start.offset)
                         const end = start + t.length
                         const range = new Range(
                             document.positionAt(start),
@@ -132,9 +133,9 @@ export class SfcExtractor extends ExtractorAbstract {
                 }
                 else {
                     if (this.isSimpleExpressionNode(node.content)) {
-                        const { content } = node.content
+                        const { content, loc } = node.content
                         this.splitTemplateLiteral(content).forEach(t => {
-                            const start = source.indexOf(t)
+                            const start = source.indexOf(t, loc.start.offset)
                             const end = start + t.length
                             const range = new Range(
                                 document.positionAt(start),
