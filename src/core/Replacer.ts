@@ -4,14 +4,14 @@ import { CurrentFile, refactorExtract } from '.'
 export class Replacer {
     static queue: ReturnType<typeof refactorExtract>[] = []
 
-    static async refactorDocument() {
+    static async refactorDocument(caller: string) {
         if (!window.activeTextEditor) return
         const { document } = window.activeTextEditor
         const { extractorResult } = CurrentFile
         const edit = new WorkspaceEdit()
 
         for (const i of extractorResult) {
-            const task = await refactorExtract(i)
+            const task = await refactorExtract(i, caller)
             this.queue.push(Promise.resolve(task))
         }
 

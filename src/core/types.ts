@@ -35,7 +35,7 @@ export interface PendingWriteParsed {
 }
 
 export interface RefactorTextResult {
-    text: string
+    replaceTo: string
     start: number
     end: number
     range: Range

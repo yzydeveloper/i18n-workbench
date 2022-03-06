@@ -14,7 +14,7 @@ const m: ExtensionModule = () => {
                 prompt: '请输入系统中的国际化方法名称',
                 ignoreFocusOut: true
             }).then(value => {
-                value && Replacer.refactorDocument()
+                value && Replacer.refactorDocument(value)
             })
         })
     ]
