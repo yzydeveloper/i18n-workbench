@@ -18,9 +18,9 @@ import { TEMPLATE_STRING } from './../meta'
 export class SfcExtractor extends ExtractorAbstract {
     public readonly id = 'vue'
     public readonly extractorRuleOptions = {
-        importanceAttributes: ['title', 'name', 'label', 'placeholder', 'tooltip', 'tip'],
+        importanceAttributes: ['bind', 'title', 'name', 'label', 'placeholder', 'tooltip', 'tip'],
         ignoreAttributes: ['class', 'id', 'style'],
-        importanceBind: ['title', 'name', 'label', 'placeholder', 'tooltip', 'tip'],
+        importanceBind: ['bind', 'title', 'name', 'label', 'placeholder', 'tooltip', 'tip'],
         ignoreBind: []
     }
 
