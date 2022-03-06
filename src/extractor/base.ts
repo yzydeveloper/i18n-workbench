@@ -21,6 +21,8 @@ export interface ExtractorResult {
     fullText?: string
     fullStart?: number
     fullEnd?: number
+    fullRange?: Range
+    attrName?: string // when the type is html-attribute
     type: ExtractorType
 }
 

@@ -164,7 +164,7 @@ export class SfcExtractor extends ExtractorAbstract {
 
                     if (this.isProp(inlineNode)) {
                         if (!this.extractorRuleOptions.importanceAttributes.includes(inlineNode.name)) return
-                        const { loc, value } = inlineNode // name="xxx"
+                        const { loc, value, name: attrName } = inlineNode // name="xxx"
                         if (value) {
                             const {
                                 loc: {
@@ -174,9 +174,15 @@ export class SfcExtractor extends ExtractorAbstract {
                             } = value
                             const start = offset + 1
                             const end = offset + 1 + content.length
+                            const fullStart = loc.start.offset
+                            const fullEnd = loc.end.offset
                             const range = new Range(
                                 document.positionAt(start),
                                 document.positionAt(end)
+                            )
+                            const fullRange = new Range(
+                                document.positionAt(fullStart),
+                                document.positionAt(fullEnd)
                             )
                             words.push({
                                 id: this.id,
@@ -185,8 +191,10 @@ export class SfcExtractor extends ExtractorAbstract {
                                 end,
                                 range,
                                 fullText: loc.source,
-                                fullStart: loc.start.offset,
-                                fullEnd: loc.end.offset,
+                                fullStart,
+                                fullEnd,
+                                fullRange,
+                                attrName,
                                 type: 'html-attribute'
                             })
                         }
