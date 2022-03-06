@@ -265,6 +265,7 @@ export class SfcExtractor extends ExtractorAbstract {
                                 start,
                                 end,
                                 range,
+                                isDynamic: true,
                                 type: 'js-template'
                             })
                         })
