@@ -1,10 +1,9 @@
-import { workspace } from 'vscode'
+import { readFileSync } from 'fs'
 export class JsonParser {
     id = 'json'
 
     async load(filepath: string): Promise<object> {
-        const document = await workspace.openTextDocument(filepath)
-        const raw = await document.getText()
+        const raw = await readFileSync(filepath, 'utf-8')
         if (!raw)
             return {}
         return await this.parse(raw)

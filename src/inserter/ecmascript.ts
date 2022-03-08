@@ -1,5 +1,4 @@
-import { workspace } from 'vscode'
-import { writeFileSync } from 'fs'
+import { writeFileSync, readFileSync } from 'fs'
 import { parse, parseExpression } from '@babel/parser'
 import traverse from '@babel/traverse'
 import { isExportDefaultDeclaration } from '@babel/types'
@@ -18,8 +17,7 @@ export class EcmascriptInserter extends Inserter {
         const file = this.files[filepath]
         const { flattenValue } = file
 
-        const document = await workspace.openTextDocument(filepath)
-        const text = document.getText() || 'export default {}'
+        const text = readFileSync(filepath, 'utf-8') || 'export default {}'
         const ast = parse(text, {
             sourceType: 'module'
         })

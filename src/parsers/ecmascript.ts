@@ -1,6 +1,6 @@
 import type { NodePath } from '@babel/traverse'
-import { workspace } from 'vscode'
 import { Module } from 'module'
+import { readFileSync } from 'fs'
 import {
     expressionStatement,
     assignmentExpression,
@@ -17,8 +17,8 @@ export class EcmascriptParser {
     ) { }
 
     async load(filepath: string): Promise<object> {
-        const document = await workspace.openTextDocument(filepath)
-        const texts = await document.getText()
+        // const document = await workspace.openTextDocument(filepath) 使用openTextDocument获取的是旧的文档？？
+        const texts = readFileSync(filepath, 'utf-8')
         if (!texts) return {}
         return this.wrapper(texts)
     }
