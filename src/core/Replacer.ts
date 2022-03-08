@@ -28,7 +28,9 @@ export class Replacer {
                     )
                 }
             })
-            workspace.applyEdit(edit)
+            workspace.applyEdit(edit).then(() => {
+                this.queue = []
+            })
         })
     }
 }
