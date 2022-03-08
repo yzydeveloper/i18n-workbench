@@ -59,7 +59,7 @@ export default abstract class ExtractorAbstract {
         const $1 = content.match(QUOTES_CHARACTER) || []
         // 1.将引号包裹的清除 2.将${}包裹的清除 3.分割换行 4.去空格 5.过滤
         const $2 = content
-            .replace(/`/g, '')
+            .replace(/`/g, '\n')
             .replace(QUOTES_CHARACTER, '')
             .replace(TEMPLATE_INNER_SYMBOL, '\n')
             .split(/\n/g).map(i => i.trim()).filter(Boolean)

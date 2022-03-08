@@ -135,20 +135,14 @@ export class SfcExtractor extends ExtractorAbstract {
                     if (this.isSimpleExpressionNode(node.content)) {
                         const { content, loc } = node.content
                         this.splitTemplateLiteral(content).forEach(t => {
-                            let start = source.indexOf(t, loc.start.offset)
-                            let end = start + t.length
-                            const isHtmlInlineTemplate = source.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(content))
-                            if (!isHtmlInlineTemplate) {
-                                // 适配 {{ '' + '' }}
-                                // TODO {{ `${title}模板内容`+ \n '模板内容' }}
-                                start -= 1
-                                end += 1
-                            }
+                            const start = source.indexOf(t, loc.start.offset)
+                            const end = start + t.length
+                            // 如果匹配的模板字符中包含当前解析的字符说明类型是 html-inline-template
+                            const isHtmlInlineTemplate = source.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(t))
                             const range = new Range(
                                 document.positionAt(start),
                                 document.positionAt(end)
                             )
-                            // 如果匹配的模板字符中包含当前解析的字符说明类型是 html-inline-template
                             words.push({
                                 id: this.id,
                                 text: t,
@@ -249,8 +243,8 @@ export class SfcExtractor extends ExtractorAbstract {
                     if (!start || !end) return
                     if (path.findParent(p => p.isImportDeclaration())) return
                     const range = new Range(
-                        document.positionAt(offset + start),
-                        document.positionAt(offset + end)
+                        document.positionAt(offset + start + 1),
+                        document.positionAt(offset + end - 1)
                     )
                     words.push({
                         id: this.id,

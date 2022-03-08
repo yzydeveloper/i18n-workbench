@@ -15,14 +15,22 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
 
     switch (type) {
         case 'html-inline':
-            refactorTextResult.replaceTo = isDynamic ? replaceTo : `{{ ${replaceTo} }}`
+            if (!isDynamic)
+                refactorTextResult.replaceTo = `{{ ${replaceTo} }}`
+            if (isDynamic) {
+                refactorTextResult.replaceTo = replaceTo
+                refactorTextResult.range = range.with({
+                    start: range.start.translate(0, -1),
+                    end: range.end.translate(0, 1),
+                })
+            }
             break
         case 'html-inline-template':
             refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
             break
         case 'html-attribute':
             if (isDynamic) refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
-            if(!isDynamic && fullRange) {
+            if (!isDynamic && fullRange) {
                 refactorTextResult = {
                     replaceTo: `:${attrName}="${replaceTo}"`,
                     start: fullStart as number,
@@ -33,6 +41,10 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
             break
         case 'js-string':
             refactorTextResult.replaceTo = `this.${replaceTo}`
+            refactorTextResult.range = range.with({
+                start: range.start.translate(0, -1),
+                end: range.end.translate(0, 1),
+            })
             break
         case 'js-template':
             refactorTextResult.replaceTo = `\$\{this.${replaceTo}\}`
