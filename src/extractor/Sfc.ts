@@ -249,9 +249,8 @@ export class SfcExtractor extends ExtractorAbstract {
                     if (!start || !end) return
                     if (path.findParent(p => p.isImportDeclaration())) return
                     const range = new Range(
-                        /** 加一，减一的原因是，去除引号 */
-                        document.positionAt(start + 1 + offset),
-                        document.positionAt(end - 1 + offset)
+                        document.positionAt(offset + start),
+                        document.positionAt(offset + end)
                     )
                     words.push({
                         id: this.id,
@@ -267,8 +266,7 @@ export class SfcExtractor extends ExtractorAbstract {
                     const value = path.get('quasis').map(item => item.node.value.raw)
                     value.forEach(v => {
                         this.splitTemplateLiteral(v).forEach(t => {
-                            // 1 是减去了 `
-                            const start = source.indexOf(t) - 1
+                            const start = source.indexOf(t)
                             const end = start + t.length
                             const range = new Range(
                                 document.positionAt(start + offset),

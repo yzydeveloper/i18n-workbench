@@ -35,7 +35,7 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
             refactorTextResult.replaceTo = `this.${replaceTo}`
             break
         case 'js-template':
-            refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
+            refactorTextResult.replaceTo = `\$\{this.${replaceTo}\}`
             break
         default:
             refactorTextResult = null
