@@ -5,7 +5,7 @@ import type { InserterSupportType } from './../inserter/base'
 import { workspace, window } from 'vscode'
 import { extname } from 'path'
 import { unflatten } from 'flat'
-import { Global } from '.'
+import { Global, Workbench, EventTypes } from '.'
 import Config from './Config'
 import { findLanguage } from './../utils'
 import { Extractor } from './../extractor'
@@ -17,28 +17,17 @@ export class CurrentFile {
     static _extractor_result: ExtractorResult[]
     static watch(ctx: ExtensionContext) {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
-        ctx.subscriptions.push(workspace.onDidChangeTextDocument((e) => {
-            if (e) {
-                this.update(e.document.uri)
-                this.extract()
-            }
-        }))
-        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => {
-            if (e) {
-                this.update(e.document.uri)
-                this.extract()
-            }
-        }))
-        if (window.activeTextEditor) {
+        ctx.subscriptions.push(workspace.onDidChangeTextDocument((e) => e && this.update(e.document.uri)))
+        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => e && this.update(e.document.uri)))
+        if (window.activeTextEditor)
             this.update(window.activeTextEditor.document.uri)
-            this.extract()
-        }
     }
 
     static update(uri: Uri) {
         this.uri = uri
         if (this._extractor?.id !== this.id)
             this._extractor = new Extractor(uri)
+        this.extract()
     }
 
     static get id() {
@@ -85,6 +74,9 @@ export class CurrentFile {
             })
             this.extractorResult = result
         }
+        Workbench.sendMessage({
+            type: EventTypes.READY,
+        })
     }
 
     static write(data: any) {

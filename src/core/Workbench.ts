@@ -9,7 +9,7 @@ export interface Message {
     type: string | number
     data?: any
 }
-enum EventTypes {
+export enum EventTypes {
     READY,
     CONFIG,
     TRANSLATE_SINGLE,
@@ -69,6 +69,10 @@ export class Workbench {
         if (!Workbench.workbench)
             Workbench.workbench = new Workbench()
         return Workbench.workbench
+    }
+
+    static sendMessage(message: Message) {
+        Workbench.workbench?.handleMessages(message)
     }
 
     // 更新单条
