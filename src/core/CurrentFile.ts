@@ -17,8 +17,8 @@ export class CurrentFile {
     static _extractor_result: ExtractorResult[]
     static watch(ctx: ExtensionContext) {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
-        ctx.subscriptions.push(workspace.onDidChangeTextDocument((e) => e && this.update(e.document.uri)))
-        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => e && this.update(e.document.uri)))
+        ctx.subscriptions.push(workspace.onDidChangeTextDocument(e => this.uri && e?.document.uri === this.uri && this.update(e.document.uri)))
+        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => this.uri && e?.document.uri === this.uri && this.update(e.document.uri)))
         if (window.activeTextEditor)
             this.update(window.activeTextEditor.document.uri)
     }
@@ -80,14 +80,16 @@ export class CurrentFile {
     }
 
     static write(data: any) {
-        const temp: PendingWrite[] = JSON.parse(data)
-        const pendingWrite = this.handlePendingWrite(temp)
+        const pendingWrite = this.handlePendingWrite(JSON.parse(data) as PendingWrite[])
         const files = Object.keys(pendingWrite)
-        for (let index = 0; index < files.length; index++) {
-            const file = files[index]
-            const { flattenData } = pendingWrite[file]
-            Inserter.insert(extname(file) as InserterSupportType, file, flattenData)
-        }
+        Promise.all(
+            files.map(file => {
+                const { flattenData } = pendingWrite[file]
+                return Inserter.insert(extname(file) as InserterSupportType, file, flattenData)
+            })
+        ).then(() => {
+            this.extract()
+        })
     }
 
     static handlePendingWrite(data: PendingWrite[]) {
