@@ -154,4 +154,8 @@ export class LocaleLoader extends Loader {
             console.log(e)
         }
     }
+
+    public syncFiles() {
+        this.loadDirectory(this.localesDir)
+    }
 }

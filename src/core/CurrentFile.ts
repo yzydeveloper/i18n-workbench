@@ -88,7 +88,7 @@ export class CurrentFile {
                 return Inserter.insert(extname(file) as InserterSupportType, file, flattenData)
             })
         ).then(() => {
-            this.extract()
+            Global.loader.syncFiles()
         })
     }
 
