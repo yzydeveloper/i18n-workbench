@@ -5,7 +5,7 @@ import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, NON_ASCII_CHARACTERS, LETTER }
 
 export type ExtractorId = 'vue'
 
-export type ExtractorType = 'html-attribute' | 'html-inline' | 'html-inline-template' | 'js-string' | 'js-template' | 'jsx-text'
+export type ExtractorType = 'html-attribute' | 'html-attribute-template' | 'html-inline' | 'html-inline-template' | 'js-string' | 'js-template' | 'jsx-text'
 export interface ExtractorOptions {
     id: string
     uri?: Uri

@@ -97,6 +97,7 @@ export class SfcExtractor extends ExtractorAbstract {
                         document.positionAt(start),
                         document.positionAt(end)
                     )
+                    const isTemplate = source.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(t))
                     words.push({
                         id: this.id,
                         text: t,
@@ -104,7 +105,7 @@ export class SfcExtractor extends ExtractorAbstract {
                         end,
                         range,
                         isDynamic: true,
-                        type: 'html-attribute'
+                        type: isTemplate ? 'html-attribute-template' : 'html-attribute'
                     })
                 })
             }
@@ -137,12 +138,12 @@ export class SfcExtractor extends ExtractorAbstract {
                         this.splitTemplateLiteral(content).forEach(t => {
                             const start = source.indexOf(t, loc.start.offset)
                             const end = start + t.length
-                            // 如果匹配的模板字符中包含当前解析的字符说明类型是 html-inline-template
-                            const isHtmlInlineTemplate = source.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(t))
                             const range = new Range(
                                 document.positionAt(start),
                                 document.positionAt(end)
                             )
+                            // 如果匹配的模板字符中包含当前解析的字符说明类型是 html-inline-template
+                            const isTemplate = source.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(t))
                             words.push({
                                 id: this.id,
                                 text: t,
@@ -150,7 +151,7 @@ export class SfcExtractor extends ExtractorAbstract {
                                 end,
                                 range,
                                 isDynamic: true,
-                                type: isHtmlInlineTemplate ? 'html-inline-template' : 'html-inline'
+                                type: isTemplate ? 'html-inline-template' : 'html-inline'
                             })
                         })
                     }
