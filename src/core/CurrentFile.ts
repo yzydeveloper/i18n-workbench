@@ -18,7 +18,7 @@ export class CurrentFile {
     static watch(ctx: ExtensionContext) {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
         ctx.subscriptions.push(workspace.onDidChangeTextDocument(e => this.uri && e?.document.uri === this.uri && this.update(e.document.uri)))
-        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => this.uri && e?.document.uri === this.uri && this.update(e.document.uri)))
+        ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => e?.document.uri && this.update(e.document.uri)))
         if (window.activeTextEditor)
             this.update(window.activeTextEditor.document.uri)
     }
