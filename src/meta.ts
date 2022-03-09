@@ -22,4 +22,4 @@ export const NON_ASCII_CHARACTERS = /[^\u{0}-\u{7F}]/u
 export const LETTER = /\p{Letter}*/ug
 
 // 特殊字符
-export const SPECIAL_CHARACTERS = /[`~!@#$%^&*()_\-+=<>?:{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘'，。、]/gim
+export const SPECIAL_CHARACTERS = /[\s`~!@#$%^&*()_\-+=<>?:{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘'，。、]/gim
