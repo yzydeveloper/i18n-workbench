@@ -1,10 +1,9 @@
 import { writeFileSync, readFileSync } from 'fs'
 import { parse, parseExpression } from '@babel/parser'
 import traverse from '@babel/traverse'
-import { isExportDefaultDeclaration } from '@babel/types'
+import { stringLiteral, objectProperty, identifier, isExportDefaultDeclaration, isObjectProperty, isIdentifier, isStringLiteral } from '@babel/types'
 import generate from '@babel/generator'
 import { unflatten } from 'flat'
-import { SPECIAL_CHARACTERS } from './../meta'
 import Inserter from './base'
 export class EcmascriptInserter extends Inserter {
     constructor(
@@ -22,27 +21,42 @@ export class EcmascriptInserter extends Inserter {
             sourceType: 'module'
         })
 
-        const mergeObject = unflatten<object, object>({
+        const mergeObject = unflatten<object, Record<string, object | string>>({
             ...flattenValue,
             ...value
         })
-
-        const expression = parseExpression(JSON.stringify(mergeObject))
         traverse(ast, {
             Program: {
                 enter(path) {
                     path.traverse({
                         ObjectExpression(p) {
-                            if (isExportDefaultDeclaration(p.parent))
-                                p.replaceWith(expression)
-                        },
-                        ObjectProperty(p) {
-                            const { node } = p
-                            const { extra } = node.key
-
-                            // 只替换不包含特殊字符的
-                            if (extra && typeof extra.raw === 'string' && !extra.raw.match(SPECIAL_CHARACTERS))
-                                extra.raw = extra.raw.replace(/"/g, '')
+                            if (isExportDefaultDeclaration(p.parent)) {
+                                const { properties } = p.node
+                                properties.forEach(propertie => {
+                                    if (isObjectProperty(propertie) && (isIdentifier(propertie.key) || isStringLiteral(propertie.key))) {
+                                        const propertieKey = propertie.key
+                                        let key
+                                        if (isIdentifier(propertieKey))
+                                            key = propertieKey.name
+                                        if(isStringLiteral(propertieKey))
+                                            key = propertieKey.value
+                                        if(!key) return
+                                        const value = mergeObject[key]
+                                        const expression = typeof value === 'object' ? parseExpression(JSON.stringify(mergeObject[key])) : stringLiteral(value)
+                                        if (mergeObject[key] || mergeObject[key] === '') {
+                                            propertie.value = expression
+                                            Reflect.deleteProperty(mergeObject, key)
+                                        }
+                                    }
+                                })
+                                Object.keys(mergeObject).forEach(key => {
+                                    const value = mergeObject[key]
+                                    const expression = value ? parseExpression(JSON.stringify(value)) : stringLiteral(value)
+                                    properties.push(
+                                        objectProperty(identifier(key), expression)
+                                    )
+                                })
+                            }
                         }
                     })
                     path.skip()
