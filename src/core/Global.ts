@@ -28,8 +28,12 @@ export class Global {
         return this._rootPath
     }
 
+    static set rootPath(path: string) {
+        this._rootPath = path
+    }
+
     static get loader() {
-        return this._loaders[this._rootPath]
+        return this._loaders[this.rootPath]
     }
 
     static get localesPath(): string | undefined {
@@ -59,7 +63,7 @@ export class Global {
             this.unloadAll()
         }
         else {
-            await this.initLoader(this._rootPath)
+            await this.initLoader(this.rootPath)
         }
     }
 
@@ -102,8 +106,8 @@ export class Global {
         if (!rootPath && workspace.workspaceFolders[0].uri.fsPath)
             rootPath = workspace.workspaceFolders[0].uri.fsPath
 
-        if (rootPath && rootPath !== this._rootPath) {
-            this._rootPath = rootPath
+        if (rootPath && rootPath !== this.rootPath) {
+            this.rootPath = rootPath
 
             Log.divider()
             Log.info(`💼 Workspace root changed to "${rootPath}"`)
