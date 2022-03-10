@@ -79,6 +79,10 @@
 			{
 				"command": "i18n-workbench.replace-with",
 				"title": "替换当前文档"
+			},
+			{
+				"command": "i18n-workbench.config-call-function-name",
+				"title": "设置系统中的国际化调用函数名称"
 			}
 		],
 		"configuration": {
@@ -88,6 +92,10 @@
 				"i18n-workbench.localesPath": {
 					"type": "string",
 					"description": "翻译文件的目录（相对于项目根目录）"
+				},
+				"i18n-workbench.callFunctionName": {
+					"type": "string",
+					"description": "国际化调用函数名称"
 				},
 				"i18n-workbench.translate-apiRoot": {
 					"type": "string",

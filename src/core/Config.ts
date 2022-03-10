@@ -17,6 +17,10 @@ export default class Config {
         return this.getConfig<string>('localesPath') ?? ''
     }
 
+    static get callFunctionName(): string {
+        return this.getConfig<string>('callFunctionName') ?? ''
+    }
+
     static getLocalesPathsInScope(scope: WorkspaceFolder): string | undefined {
         return this.getConfig('localesPath', scope)
     }
@@ -44,6 +48,10 @@ export default class Config {
 
     static updateLocalesPath(path: string) {
         this.setConfig('localesPath', path)
+    }
+
+    static updatecallFunctionName(name: string) {
+        this.setConfig('callFunctionName', name)
     }
 
     private static getConfig<T = any>(key: string, scope?: ConfigurationScope | undefined): T | undefined {
