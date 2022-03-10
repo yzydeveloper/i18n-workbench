@@ -1,6 +1,6 @@
 import { Global } from './../core'
 
-export type InserterSupportType = '.js' | '.ts'
+export type InserterSupportType = '.js' | '.ts' | '.json'
 
 export default abstract class InserterAbstract {
     public get files() {
