@@ -38,10 +38,6 @@ export default class Config {
         return this.getConfig<string>('sourceLanguage') ?? 'zh-CN'
     }
 
-    static get namespace(): boolean | undefined {
-        return this.getConfig<boolean>('namespace')
-    }
-
     static get ignoreFiles() {
         return this.getConfig<string[]>('ignoreFiles') ?? []
     }

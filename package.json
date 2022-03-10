@@ -122,11 +122,6 @@
 					"default": "zh-CN",
 					"description": "翻译源语言"
 				},
-				"i18n-workbench.namespace": {
-					"type": "boolean",
-					"default": false,
-					"description": "启用命名空间"
-				},
 				"i18n-workbench.ignoreFiles": {
 					"type": "array",
 					"item": {
