@@ -1,4 +1,4 @@
-import { Global } from './../core'
+import { Global } from '../core'
 
 export type InserterSupportType = '.js' | '.ts' | '.json'
 

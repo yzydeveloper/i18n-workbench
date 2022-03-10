@@ -1,5 +1,5 @@
 import type { RefactorTextResult } from '.'
-import type { ExtractorResult } from '../extractor/base'
+import type { ExtractorResult } from '../extractors/base'
 import { window } from 'vscode'
 import { Global } from '.'
 

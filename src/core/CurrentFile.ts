@@ -1,16 +1,16 @@
 import type { ExtensionContext, Uri } from 'vscode'
-import type { ExtractorResult } from './../extractor/base'
+import type { ExtractorResult } from '../extractors/base'
 import type { Dictionary, PendingWrite, PendingWriteParsed } from '.'
-import type { InserterSupportType } from './../inserter/base'
+import type { InserterSupportType } from '../inserters/base'
 import { workspace, window } from 'vscode'
 import { extname } from 'path'
 import { unflatten } from 'flat'
 import { Global, Workbench, EventTypes } from '.'
 import Config from './Config'
 import { findLanguage } from './../utils'
-import { Extractor } from './../extractor'
+import { Extractor } from '../extractors'
 import { Translator } from './Translator'
-import { Inserter } from './../inserter'
+import { Inserter } from '../inserters'
 export class CurrentFile {
     static uri: Uri | undefined
     static _extractor: Extractor | null = null

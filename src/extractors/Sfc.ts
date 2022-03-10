@@ -13,7 +13,7 @@ import {
 } from '@vue/compiler-core'
 import { ParserPlugin, parse as babelParse } from '@babel/parser'
 import traverse from '@babel/traverse'
-import { TEMPLATE_STRING } from './../meta'
+import { TEMPLATE_STRING } from '../meta'
 
 export class SfcExtractor extends ExtractorAbstract {
     public readonly id = 'vue'

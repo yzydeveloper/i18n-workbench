@@ -1,7 +1,7 @@
 
 import type { Uri, Range, TextDocument } from 'vscode'
 import { window } from 'vscode'
-import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, NON_ASCII_CHARACTERS, LETTER } from './../meta'
+import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, NON_ASCII_CHARACTERS, LETTER } from '../meta'
 
 export type ExtractorId = 'vue'
 
