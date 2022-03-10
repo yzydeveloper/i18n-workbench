@@ -8,7 +8,6 @@ import Config from './Config'
 export class Global {
     private static _loaders: Record<string, LocaleLoader> = {}
     private static _rootPath: string
-    private static _callFunctionName: string = Config.callFunctionName
     private static _currentWorkspaceFolder: WorkspaceFolder
 
     static context: ExtensionContext
@@ -47,11 +46,10 @@ export class Global {
     }
 
     static get callFunctionName(): string {
-        return this._callFunctionName
+        return Config.callFunctionName
     }
 
     static set callFunctionName(name: string) {
-        this._callFunctionName = name
         Config.updatecallFunctionName(name)
     }
 
