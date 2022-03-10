@@ -4,7 +4,7 @@ import { window } from 'vscode'
 import { Global } from '.'
 
 function commit(extracted: ExtractorResult, keypath: string, caller: string) {
-    const { start, end, range, isDynamic, fullStart, fullEnd, fullRange, attrName, type } = extracted
+    const { start, end, range, isDynamic, isSetup, fullStart, fullEnd, fullRange, attrName, type } = extracted
     const replaceTo = `${caller}('${keypath}')`
     let refactorTextResult: RefactorTextResult | null = {
         replaceTo,
@@ -48,14 +48,21 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
             refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
             break
         case 'js-string':
-            refactorTextResult.replaceTo = `this.${replaceTo}`
+            if(!isSetup)
+                refactorTextResult.replaceTo = `this.${replaceTo}`
+
             refactorTextResult.range = range.with({
                 start: range.start.translate(0, -1),
                 end: range.end.translate(0, 1),
             })
             break
         case 'js-template':
-            refactorTextResult.replaceTo = `\$\{this.${replaceTo}\}`
+            if(!isSetup)
+                refactorTextResult.replaceTo = `\$\{this.${replaceTo}\}`
+
+            if(isSetup)
+                refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
+
             break
         default:
             refactorTextResult = null

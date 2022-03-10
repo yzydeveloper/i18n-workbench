@@ -218,6 +218,7 @@ export class SfcExtractor extends ExtractorAbstract {
 
         const words: ExtractorResult[] = []
         const plugins: ParserPlugin[] = []
+        let isSetup: ExtractorResult['isSetup'] = false
         scriptNode.props.forEach(p => {
             if (p.type === 6) {
                 if (p.name === 'lang') {
@@ -229,6 +230,8 @@ export class SfcExtractor extends ExtractorAbstract {
                     if (isTs)
                         plugins.push('typescript', 'decorators-legacy')
                 }
+                if (p.name === 'setup')
+                    isSetup = true
             }
         })
 
@@ -253,29 +256,36 @@ export class SfcExtractor extends ExtractorAbstract {
                         start,
                         end,
                         range,
+                        isSetup,
                         type: 'js-string'
                     })
                 },
                 TemplateLiteral: (path) => {
                     if (path.findParent(p => p.isImportDeclaration())) return
-                    const value = path.get('quasis').map(item => item.node.value.raw)
-                    value.forEach(v => {
-                        this.splitTemplateLiteral(v).forEach(t => {
-                            const start = source.indexOf(t)
-                            const end = start + t.length
-                            const range = new Range(
-                                document.positionAt(start + offset),
-                                document.positionAt(end + offset)
-                            )
-                            words.push({
-                                id: this.id,
-                                text: t,
-                                start,
-                                end,
-                                range,
-                                isDynamic: true,
-                                type: 'js-template'
-                            })
+                    const value = path.get('quasis').map(item => ({
+                        text: item.node.value.raw,
+                        start: item.node.start
+                    }))
+                    value.forEach(item => {
+                        this.splitTemplateLiteral(item.text).forEach(t => {
+                            if (item.start) {
+                                const start = source.indexOf(t, item.start)
+                                const end = start + t.length
+                                const range = new Range(
+                                    document.positionAt(start + offset),
+                                    document.positionAt(end + offset)
+                                )
+                                words.push({
+                                    id: this.id,
+                                    text: t,
+                                    start,
+                                    end,
+                                    range,
+                                    isDynamic: true,
+                                    isSetup,
+                                    type: 'js-template'
+                                })
+                            }
                         })
                     })
                 }

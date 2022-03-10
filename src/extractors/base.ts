@@ -18,6 +18,7 @@ export interface ExtractorResult {
     end: number
     range: Range
     isDynamic?: boolean
+    isSetup?: boolean // script setup
     fullText?: string
     fullStart?: number
     fullEnd?: number
