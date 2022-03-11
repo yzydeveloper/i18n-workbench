@@ -3,7 +3,7 @@ import type { Uri, Range, TextDocument } from 'vscode'
 import { window } from 'vscode'
 import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, NON_ASCII_CHARACTERS, LETTER } from '../meta'
 
-export type ExtractorId = 'vue'
+export type ExtractorId = 'vue' | 'tsx' | 'jsx'
 
 export type ExtractorType = 'html-attribute' | 'html-attribute-template' | 'html-inline' | 'html-inline-template' | 'js-string' | 'js-template' | 'jsx-text'
 export interface ExtractorOptions {
