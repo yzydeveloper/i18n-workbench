@@ -29,22 +29,26 @@ export class BabelExtractor extends ExtractorAbstract {
         const words: ExtractorResult[] = []
         traverse(ast, {
             StringLiteral: (path) => {
-                const { value, start, end } = path.node
-                if (!start || !end)
+                const { value, start: fullStart, end: fullEnd } = path.node
+                if (!fullStart || !fullEnd)
                     return
-                if (this.isIgnored(start, end) || path.findParent(p => p.isImportDeclaration()))
+                if (this.isIgnored(fullStart, fullEnd) || path.findParent(p => p.isImportDeclaration()))
                     return
-                const range = new Range(
-                    document.positionAt(start + 1),
-                    document.positionAt(end - 1)
-                )
-                words.push({
-                    id: this.id,
-                    text: value,
-                    start,
-                    end,
-                    range,
-                    type: 'js-string'
+                this.getShouldExtractedText(value).forEach(t => {
+                    const start = code.indexOf(t, fullStart)
+                    const end = start + t.length
+                    const range = new Range(
+                        document.positionAt(start + 1),
+                        document.positionAt(end - 1)
+                    )
+                    words.push({
+                        id: this.id,
+                        text: t,
+                        start,
+                        end,
+                        range,
+                        type: 'js-string'
+                    })
                 })
             },
             TemplateLiteral: (path) => {
@@ -54,7 +58,7 @@ export class BabelExtractor extends ExtractorAbstract {
                     start: item.node.start
                 }))
                 value.forEach(item => {
-                    this.splitTemplateLiteral(item.text).forEach(t => {
+                    this.getShouldExtractedText(item.text).forEach(t => {
                         if (item.start) {
                             const start = code.indexOf(t, item.start)
                             const end = start + t.length
@@ -77,8 +81,8 @@ export class BabelExtractor extends ExtractorAbstract {
             },
             JSXText: (path) => {
                 const { value, start: fullStart } = path.node
-                if(!fullStart) return
-                this.splitTextLiteral(value).forEach(t => {
+                if (!fullStart) return
+                this.getPlainText(value).forEach(t => {
                     const start = code.indexOf(t, fullStart)
                     const end = start + t.length
                     const range = new Range(

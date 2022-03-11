@@ -1,7 +1,8 @@
 
 import type { Uri, Range, TextDocument } from 'vscode'
 import { window } from 'vscode'
-import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, NON_ASCII_CHARACTERS, LETTER } from '../meta'
+import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL } from '../meta'
+import { shouldExtract } from './rules'
 
 export type ExtractorId = 'vue' | 'tsx' | 'jsx'
 
@@ -55,22 +56,27 @@ export default abstract class ExtractorAbstract {
         this._document = value
     }
 
-    splitTemplateLiteral(content: string): string[] {
-        // 1.匹配被引号包裹的
-        const $1 = content.match(QUOTES_CHARACTER) || []
-        // 1.将引号包裹的清除 2.将${}包裹的清除 3.分割换行 4.去空格 5.过滤
-        const $2 = content
-            .replace(/`/g, '\n')
-            .replace(QUOTES_CHARACTER, '')
-            .replace(TEMPLATE_INNER_SYMBOL, '\n')
-            .split(/\n/g).map(i => i.trim()).filter(Boolean)
+    public shouldExtract = shouldExtract
 
-        // 过滤合并后不符条件得数据
-        const merge = [...$1, ...$2].filter(i => i.match(LETTER)?.some(word => word.match(NON_ASCII_CHARACTERS)))
+    public getShouldExtractedText(content: string): string[] {
+        const quotesInner = content.match(QUOTES_CHARACTER) || [] // 引号内的
+        const forcedToMatch = content
+            .replace(/`/g, '\n') // 将 ` 替换为 \n
+            .replace(QUOTES_CHARACTER, '') // 将 "" '' 清除
+            .replace(TEMPLATE_INNER_SYMBOL, '\n') // 将 ${} 替换为 \n
+            .split(/\n/g).map(i => i.trim()).filter(Boolean) // 根据 \n 分割 去空 过滤
+
+        const merge = [...quotesInner, ...forcedToMatch].reduce<string[]>((result, text) => {
+            if (shouldExtract(text))
+                result.push(text)
+
+            return result
+        }, [])
+
         return merge
     }
 
-    splitTextLiteral(content: string): string[] {
+    public getPlainText(content: string): string[] {
         return content.split(/\n/g).map(i => i.trim()).filter(Boolean)
     }
 

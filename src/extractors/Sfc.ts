@@ -90,7 +90,7 @@ export class SfcExtractor extends ExtractorAbstract {
             const exp = node.exp
             if (exp && this.isSimpleExpressionNode(exp)) {
                 const { loc, content } = exp
-                this.splitTemplateLiteral(content).forEach(t => {
+                this.getShouldExtractedText(content).forEach(t => {
                     const start = source.indexOf(t, loc.start.offset)
                     const end = start + t.length
                     const range = new Range(
@@ -115,7 +115,7 @@ export class SfcExtractor extends ExtractorAbstract {
                 if (!this.isInterPolation(node)) {
                     // source中包含 \n
                     const { loc } = node
-                    this.splitTextLiteral(loc.source).forEach(t => {
+                    this.getPlainText(loc.source).forEach(t => {
                         const start = source.indexOf(t, loc.start.offset)
                         const end = start + t.length
                         const range = new Range(
@@ -135,7 +135,7 @@ export class SfcExtractor extends ExtractorAbstract {
                 else {
                     if (this.isSimpleExpressionNode(node.content)) {
                         const { content, loc } = node.content
-                        this.splitTemplateLiteral(content).forEach(t => {
+                        this.getShouldExtractedText(content).forEach(t => {
                             const start = source.indexOf(t, loc.start.offset)
                             const end = start + t.length
                             const range = new Range(
@@ -244,6 +244,7 @@ export class SfcExtractor extends ExtractorAbstract {
             traverse(ast, {
                 StringLiteral: (path) => {
                     const { value, start, end } = path.node
+                    if (!this.shouldExtract(value)) return
                     if (!start || !end) return
                     if (path.findParent(p => p.isImportDeclaration())) return
                     const range = new Range(
@@ -267,7 +268,7 @@ export class SfcExtractor extends ExtractorAbstract {
                         start: item.node.start
                     }))
                     value.forEach(item => {
-                        this.splitTemplateLiteral(item.text).forEach(t => {
+                        this.getShouldExtractedText(item.text).forEach(t => {
                             if (item.start) {
                                 const start = source.indexOf(t, item.start)
                                 const end = start + t.length
