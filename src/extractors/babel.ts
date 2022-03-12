@@ -38,8 +38,8 @@ export class BabelExtractor extends ExtractorAbstract {
                     const start = code.indexOf(t, fullStart)
                     const end = start + t.length
                     const range = new Range(
-                        document.positionAt(start + 1),
-                        document.positionAt(end - 1)
+                        document.positionAt(start),
+                        document.positionAt(end)
                     )
                     words.push({
                         id: this.id,
@@ -47,6 +47,7 @@ export class BabelExtractor extends ExtractorAbstract {
                         start,
                         end,
                         range,
+                        isJsx: true,
                         type: 'js-string'
                     })
                 })
@@ -72,7 +73,7 @@ export class BabelExtractor extends ExtractorAbstract {
                                 start,
                                 end,
                                 range,
-                                isDynamic: true,
+                                isJsx: true,
                                 type: 'js-template'
                             })
                         }
@@ -95,7 +96,8 @@ export class BabelExtractor extends ExtractorAbstract {
                         start,
                         end,
                         range,
-                        type: 'html-inline'
+                        isJsx: true,
+                        type: 'jsx-text'
                     })
                 })
             },
