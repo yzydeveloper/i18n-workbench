@@ -87,9 +87,7 @@ export class CurrentFile {
                 const { flattenData } = pendingWrite[file]
                 return Inserter.insert(extname(file) as InserterSupportType, file, flattenData)
             })
-        ).then(() => {
-            Global.loader.syncFiles()
-        })
+        )
     }
 
     static handlePendingWrite(data: PendingWrite[]) {

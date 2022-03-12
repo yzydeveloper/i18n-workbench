@@ -1,5 +1,6 @@
 import type { ParsedFile, DirStructure } from '..'
 import { resolve, extname, basename } from 'path'
+import { workspace, RelativePattern } from 'vscode'
 import fg from 'fast-glob'
 import { flatten } from 'flat'
 import { Loader } from './Loader'
@@ -24,9 +25,11 @@ export class LocaleLoader extends Loader {
         return resolve(this.rootPath, this.localesPath)
     }
 
-    async init() {
+    async init(watch = true) {
         await this.setPathMather()
         await this.loadDirectory(this.localesDir)
+        if (watch)
+            this.watchOn(this.localesDir)
 
         Log.divider()
     }
@@ -46,6 +49,23 @@ export class LocaleLoader extends Loader {
             regex = '^(?<locale>[\\w-_]+)\.(js|ts|json)$'
         }
         this._path_matcher = new RegExp(regex)
+    }
+
+    private async watchOn(rootPath: string) {
+        Log.info(`\n👀 Watching change on ${rootPath}`)
+        const watcher = workspace.createFileSystemWatcher(
+            new RelativePattern(rootPath, '**/*'),
+        )
+
+        watcher.onDidChange(this.onFileChanged, this, this._disposables)
+        watcher.onDidCreate(this.onFileChanged, this, this._disposables)
+        watcher.onDidDelete(this.onFileChanged, this, this._disposables)
+
+        this._disposables.push(watcher)
+    }
+
+    private async onFileChanged() {
+        this.init(false)
     }
 
     get allLocales() {
@@ -156,6 +176,6 @@ export class LocaleLoader extends Loader {
     }
 
     public syncFiles() {
-        this.loadDirectory(this.localesDir)
+        this.init(false)
     }
 }
