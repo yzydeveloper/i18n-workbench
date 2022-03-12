@@ -1,7 +1,7 @@
 
 import type { Uri, Range, TextDocument } from 'vscode'
 import { window } from 'vscode'
-import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL } from '../meta'
+import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, CLOSED_TAG } from '../meta'
 import { shouldExtract } from './rules'
 
 export type ExtractorId = 'vue' | 'tsx' | 'jsx'
@@ -62,6 +62,7 @@ export default abstract class ExtractorAbstract {
         const quotesInner = content.match(QUOTES_CHARACTER) || [] // 引号内的
         const forcedToMatch = content
             .replace(/`/g, '\n') // 将 ` 替换为 \n
+            .replace(CLOSED_TAG, '\n') // 将 <> </> 替换为 \n
             .replace(QUOTES_CHARACTER, '') // 将 "" '' 清除
             .replace(TEMPLATE_INNER_SYMBOL, '\n') // 将 ${} 替换为 \n
             .split(/\n/g).map(i => i.trim()).filter(Boolean) // 根据 \n 分割 去空 过滤

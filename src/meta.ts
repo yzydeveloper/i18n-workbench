@@ -4,15 +4,18 @@ export const EXT_ID = 'yzydeveloper.i18n-workbench'
 
 export const PROJECT_ID = 'package.json'
 
-// 中文
 export const CHINESE_REGEX = /[\u4E00-\u9FA5]+/gm
 
-// 引号
+// "" ''
 export const QUOTES_CHARACTER = /(?<="|').*?(?="|')/g
 
-// 模板
+// <span> | </span>
+export const CLOSED_TAG = /<\/?\w.+?>/gi
+
+// ${}
 export const TEMPLATE_INNER_SYMBOL = /\$\{.*?\}/g
 
+// ``
 export const TEMPLATE_STRING = /(?<=`).*?(?=`)/gs
 
 // 非ASCLL字符
