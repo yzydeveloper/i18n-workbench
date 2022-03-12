@@ -1,12 +1,13 @@
 
 import type { Uri, Range, TextDocument } from 'vscode'
 import { window } from 'vscode'
-import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, CLOSED_TAG } from '../meta'
 import { shouldExtract } from './rules'
+import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, CLOSED_TAG } from '../meta'
 
 export type ExtractorId = 'vue' | 'tsx' | 'jsx'
 
 export type ExtractorType = 'html-attribute' | 'html-attribute-template' | 'html-inline' | 'html-inline-template' | 'js-string' | 'js-template' | 'jsx-text'
+
 export interface ExtractorOptions {
     id: string
     uri?: Uri
@@ -43,10 +44,6 @@ export default abstract class ExtractorAbstract {
 
     abstract readonly id: string
     abstract readonly extractorRuleOptions: ExtractorRuleOptions
-
-    get filepath() {
-        return this.uri.fsPath
-    }
 
     public _document: TextDocument | undefined = window.activeTextEditor?.document
     get document() {

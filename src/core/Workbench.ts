@@ -9,12 +9,14 @@ export interface Message {
     type: string | number
     data?: any
 }
+
 export enum EventTypes {
     READY,
     CONFIG,
     TRANSLATE_SINGLE,
     SAVE
 }
+
 export class Workbench {
     public static workbench: Workbench | undefined
     private readonly panel: WebviewPanel

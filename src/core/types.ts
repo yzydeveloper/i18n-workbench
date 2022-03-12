@@ -4,8 +4,6 @@ export type Dictionary<T> = {
     [key: string]: T
 }
 
-export type LocalesPath = string
-
 export type DirStructure = 'file' | 'dir' | ''
 
 export interface ExtensionModule {
