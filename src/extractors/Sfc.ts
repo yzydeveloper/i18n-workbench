@@ -13,6 +13,7 @@ import {
 } from '@vue/compiler-core'
 import { ParserPlugin, parse as babelParse } from '@babel/parser'
 import traverse from '@babel/traverse'
+import { isIdentifier } from '@babel/types'
 import { TEMPLATE_STRING } from '../meta'
 
 export class SfcExtractor extends ExtractorAbstract {
@@ -241,6 +242,17 @@ export class SfcExtractor extends ExtractorAbstract {
                 sourceType: 'module'
             })
             traverse(ast, {
+                Program: {
+                    enter(path) {
+                        path.traverse({
+                            ObjectMethod(path) {
+                                const { key } = path.node
+                                if (isIdentifier(key))
+                                    isSetup = key.name === 'setup'
+                            }
+                        })
+                    }
+                },
                 StringLiteral: (path) => {
                     const { value, start, end } = path.node
                     if (!this.shouldExtract(value)) return
