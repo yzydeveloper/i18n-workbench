@@ -3,7 +3,7 @@
 	"name": "i18n-workbench",
 	"displayName": "I18n Workbench",
 	"description": "I18n Workbench",
-	"version": "0.0.1",
+	"version": "1.0.0-beta",
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.60.0"
