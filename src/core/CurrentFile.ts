@@ -47,6 +47,7 @@ export class CurrentFile {
     static get pendingWrite() {
         const { allLocales, languageMapFile } = Global.loader
         const from = findLanguage(Config.sourceLanguage)
+        const storage: string[] = []
 
         return this.extractorResult.reduce<PendingWrite[]>((result, item) => {
             const options = allLocales.reduce<{
@@ -60,10 +61,14 @@ export class CurrentFile {
                 insertPath: {},
                 languages: {}
             })
-            result.push({
-                key: '',
-                ...options
-            })
+            const storageText = options.languages[from]
+            if(!storage.includes(storageText)) {
+                result.push({
+                    key: '',
+                    ...options
+                })
+            }
+            storage.push(storageText)
             return result
         }, [])
     }
