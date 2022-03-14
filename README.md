@@ -1,5 +1,6 @@
-
-<span align="center" style="display:block;font-size:56px;color:#999999;">还缺个图</span>
+<h1 align="center">
+    <img src="./assets/Logo.png" />
+</h1>
 
 <h1 align="center">i18n-workbench</h1>
 
