@@ -142,8 +142,7 @@ export class SfcExtractor extends ExtractorAbstract {
                                 document.positionAt(start),
                                 document.positionAt(end)
                             )
-                            // 如果匹配的模板字符中包含当前解析的字符说明类型是 html-inline-template
-                            const isTemplate = source.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(t))
+                            const isTemplate = content.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(t))
                             words.push({
                                 id: this.id,
                                 text: t,
