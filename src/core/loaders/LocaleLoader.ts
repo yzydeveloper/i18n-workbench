@@ -95,10 +95,14 @@ export class LocaleLoader extends Loader {
                 Object.keys(flattenValue).forEach(keypath => {
                     const text: string = Reflect.get(flattenValue, keypath)
                     const keypaths = map.get(text)
+                    let item = keypath
+                    if(this.dirStructure === 'dir')
+                        item = `${group}.${keypath}`
+
                     if (!keypaths)
-                        map.set(text, [`${group}.${keypath}`])
+                        map.set(text, [item])
                     else
-                        map.set(text, keypaths.concat(`${group}.${keypath}`))
+                        map.set(text, keypaths.concat(item))
                 })
             }
         })
