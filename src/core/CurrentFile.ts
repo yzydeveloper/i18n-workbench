@@ -62,7 +62,7 @@ export class CurrentFile {
                 languages: {}
             })
             const storageText = options.languages[from]
-            if(!storage.includes(storageText)) {
+            if (!storage.includes(storageText)) {
                 result.push({
                     key: '',
                     ...options
