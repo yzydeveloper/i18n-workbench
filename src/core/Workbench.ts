@@ -80,7 +80,7 @@ export class Workbench {
     // 更新单条
     public async translateSignal(data: Message['data']) {
         const { text, index } = data
-        const r = await CurrentFile.translateSingle(text)
+        const r = await CurrentFile.translate(text)
         this.panel.webview.postMessage({
             type: EventTypes.TRANSLATE_SINGLE,
             data: {

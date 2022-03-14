@@ -125,7 +125,7 @@ export class CurrentFile {
         return pendingWriteParsed
     }
 
-    static async translateSingle(text: string) {
+    static async translate(text: string) {
         const allLocales = Global.loader.allLocales
         const from = findLanguage(Config.sourceLanguage)
         const result = await Translator.translate(from, text, allLocales)
