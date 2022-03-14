@@ -1,6 +1,6 @@
-<h1 align="center">
+<div align="center">
     <img src="./assets/Logo.png" />
-</h1>
+</div>
 
 <h1 align="center">i18n-workbench</h1>
 
