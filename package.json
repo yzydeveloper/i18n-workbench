@@ -2,7 +2,7 @@
 	"publisher": "yzydeveloper",
 	"name": "i18n-workbench",
 	"displayName": "I18n Workbench",
-	"description": "I18n Workbench",
+	"description": "International Workbench Expansion",
 	"version": "1.0.0-beta.2",
 	"license": "MIT",
 	"engines": {
