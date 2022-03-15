@@ -5,6 +5,7 @@ import { stringLiteral, objectProperty, identifier, isExportDefaultDeclaration, 
 import generate from '@babel/generator'
 import { unflatten } from 'flat'
 import Inserter from './base'
+import { SPECIAL_CHARACTERS } from './../meta'
 export class EcmascriptInserter extends Inserter {
     constructor(
         public readonly id: 'js' | 'ts' = 'js'
@@ -38,9 +39,9 @@ export class EcmascriptInserter extends Inserter {
                                         let key
                                         if (isIdentifier(propertieKey))
                                             key = propertieKey.name
-                                        if(isStringLiteral(propertieKey))
+                                        if (isStringLiteral(propertieKey))
                                             key = propertieKey.value
-                                        if(!key) return
+                                        if (!key) return
                                         const value = mergeObject[key]
                                         const expression = typeof value === 'object' ? parseExpression(JSON.stringify(mergeObject[key])) : stringLiteral(value)
                                         if (mergeObject[key] || mergeObject[key] === '') {
@@ -49,8 +50,12 @@ export class EcmascriptInserter extends Inserter {
                                         }
                                     }
                                 })
-                                Object.keys(mergeObject).forEach(key => {
-                                    const value = mergeObject[key]
+                                Object.keys(mergeObject).forEach(item => {
+                                    const value = mergeObject[item]
+                                    let key = item
+                                    if (key.match(SPECIAL_CHARACTERS))
+                                        key = `'${key}'`
+
                                     const expression = value ? parseExpression(JSON.stringify(value)) : stringLiteral(value)
                                     properties.push(
                                         objectProperty(identifier(key), expression)
@@ -59,8 +64,15 @@ export class EcmascriptInserter extends Inserter {
                             }
                         }
                     })
-                    path.skip()
                 }
+            },
+            ObjectProperty(p) {
+                const { node } = p
+                const { extra } = node.key
+
+                // 只替换不包含特殊字符的
+                if (extra && typeof extra.raw === 'string' && !extra.raw.match(SPECIAL_CHARACTERS))
+                    extra.raw = extra.raw.replace(/"/g, '')
             }
         })
 
