@@ -14,8 +14,7 @@ export class ConfigLocalesGuide {
             okText,
         )
 
-        if (result !== okText)
-            return
+        if (result !== okText) { return }
 
         this.config()
     }
@@ -30,27 +29,23 @@ export class ConfigLocalesGuide {
 
     static async pickDir(): Promise<string[]> {
         const rootPath = workspace.workspaceFolders?.[0]?.uri.fsPath
-        if (!rootPath)
-            return []
+        if (!rootPath) { return [] }
 
         const dirs = await window.showOpenDialog({
             defaultUri: Uri.file(rootPath),
             canSelectFolders: true,
         })
 
-        if (!dirs)
-            return []
+        if (!dirs) { return [] }
 
         return dirs
             .map((item) => {
-                if (process.platform === 'win32')
-                    return item.path.slice(1)
+                if (process.platform === 'win32') { return item.path.slice(1) }
                 return item.path
             })
             .map(pa => path
                 .relative(rootPath, pa)
-                .replace(/\\/g, '/'),
-            )
+                .replace(/\\/g, '/'))
     }
 
     static async success() {
@@ -59,8 +54,7 @@ export class ConfigLocalesGuide {
 
     static async autoSet() {
         const rootPath = workspace.workspaceFolders?.[0]?.uri.fsPath
-        if (!rootPath)
-            return
+        if (!rootPath) { return }
 
         const pattern = ['**/**/(locales|locale|i18n|lang|langs|language|languages|messages)']
         const result: string[] = await fg(pattern, {
@@ -78,20 +72,21 @@ export class ConfigLocalesGuide {
             await window.showInformationMessage(
                 `自动检测到翻译文件夹 ${result}`
             )
-        }
-        else {
+        } else {
             Log.warn('没有找到翻译文件夹，插件已停用', false)
             this.prompt()
         }
     }
 }
-const m: ExtensionModule = () => {
-    return [
-        commands.registerCommand(Commands.config_locales_auto,
-            () => ConfigLocalesGuide.autoSet()),
-        commands.registerCommand(Commands.config_locales,
-            () => ConfigLocalesGuide.config()),
-    ]
-}
+const m: ExtensionModule = () => [
+    commands.registerCommand(
+        Commands.config_locales_auto,
+        () => ConfigLocalesGuide.autoSet()
+    ),
+    commands.registerCommand(
+        Commands.config_locales,
+        () => ConfigLocalesGuide.config()
+    ),
+]
 
 export default m

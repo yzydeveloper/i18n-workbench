@@ -4,7 +4,7 @@ import ConfigLocaleCommand from './configLocalePaths'
 
 export * from './commands'
 
-export default <ExtensionModule> function (ctx) {
+export default <ExtensionModule>function registerCommand(ctx) {
     ExtractCommand(ctx)
     ConfigLocaleCommand(ctx)
 }
