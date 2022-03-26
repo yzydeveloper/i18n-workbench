@@ -8,8 +8,7 @@ export class NonAsciiExtractionRule extends ExtractionRule {
         const words = str.match(/\p{Letter}*/ug) ?? []
         const containsWordWithNonAsciiChar = words.some(word => word.match(/[^\u{0}-\u{7F}]/u))
 
-        if (containsWordWithNonAsciiChar)
-            return ExtractionScore.MustInclude
+        if (containsWordWithNonAsciiChar) { return ExtractionScore.MustInclude }
         return ExtractionScore.MustExclude
     }
 }

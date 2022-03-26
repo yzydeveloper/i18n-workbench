@@ -18,6 +18,7 @@ import { TEMPLATE_STRING } from '../meta'
 
 export class SfcExtractor extends ExtractorAbstract {
     public readonly id = 'vue'
+
     public readonly extractorRuleOptions = {
         importanceAttributes: ['bind', 'title', 'name', 'label', 'placeholder', 'tooltip', 'tip'],
         ignoreAttributes: ['class', 'id', 'style'],
@@ -41,16 +42,13 @@ export class SfcExtractor extends ExtractorAbstract {
                                 && p.value.content
                                 && p.value.content !== 'html'
                         ))
-                )
-                    return 2
-                else
-                    return 0
+                ) return 2
+                return 0
             },
         })
         const result: ExtractorResult[] = []
         ast.children.forEach(node => {
-            if (node.type !== 1) // NODETYPES.ELEMENT
-                return
+            if (node.type !== 1) { return } // NODETYPES.ELEMENT
             switch (node.tag) {
                 case 'template':
                     this.createExtractorResult(node).forEach(item => result.push(item))
@@ -88,7 +86,7 @@ export class SfcExtractor extends ExtractorAbstract {
         const { source } = templateNode.loc
         const words: ExtractorResult[] = []
         const visitorAttr = (node: DirectiveNode) => {
-            const exp = node.exp
+            const { exp } = node
             if (exp && this.isSimpleExpressionNode(exp)) {
                 const { loc, content } = exp
                 this.getShouldExtractedText(content).forEach(t => {
@@ -132,29 +130,26 @@ export class SfcExtractor extends ExtractorAbstract {
                             type: 'html-inline'
                         })
                     })
-                }
-                else {
-                    if (this.isSimpleExpressionNode(node.content)) {
-                        const { content, loc } = node.content
-                        this.getShouldExtractedText(content).forEach(t => {
-                            const start = source.indexOf(t, loc.start.offset)
-                            const end = start + t.length
-                            const range = new Range(
-                                document.positionAt(start),
-                                document.positionAt(end)
-                            )
-                            const isTemplate = content.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(t))
-                            words.push({
-                                id: this.id,
-                                text: t,
-                                start,
-                                end,
-                                range,
-                                isDynamic: true,
-                                type: isTemplate ? 'html-inline-template' : 'html-inline'
-                            })
+                } else if (this.isSimpleExpressionNode(node.content)) {
+                    const { content, loc } = node.content
+                    this.getShouldExtractedText(content).forEach(t => {
+                        const start = source.indexOf(t, loc.start.offset)
+                        const end = start + t.length
+                        const range = new Range(
+                            document.positionAt(start),
+                            document.positionAt(end)
+                        )
+                        const isTemplate = content.match(TEMPLATE_STRING)?.some(i => `\`${i}\``.includes(t))
+                        words.push({
+                            id: this.id,
+                            text: t,
+                            start,
+                            end,
+                            range,
+                            isDynamic: true,
+                            type: isTemplate ? 'html-inline-template' : 'html-inline'
                         })
-                    }
+                    })
                 }
             }
             if (node.type === 1) {
@@ -224,14 +219,11 @@ export class SfcExtractor extends ExtractorAbstract {
                 if (p.name === 'lang') {
                     const lang = (p.value && p.value.content) ?? ''
                     const isTs = ['ts', 'tsx'].includes(lang)
-                    if (lang === 'tsx')
-                        plugins.push('jsx')
+                    if (lang === 'tsx') { plugins.push('jsx') }
 
-                    if (isTs)
-                        plugins.push('typescript', 'decorators-legacy')
+                    if (isTs) { plugins.push('typescript', 'decorators-legacy') }
                 }
-                if (p.name === 'setup')
-                    isSetup = true
+                if (p.name === 'setup') { isSetup = true }
             }
         })
 
@@ -247,8 +239,7 @@ export class SfcExtractor extends ExtractorAbstract {
                         path.traverse({
                             ObjectMethod(path) {
                                 const { key } = path.node
-                                if (isIdentifier(key))
-                                    isSetup = key.name === 'setup'
+                                if (isIdentifier(key)) { isSetup = key.name === 'setup' }
                             }
                         })
                     }
@@ -308,11 +299,9 @@ export class SfcExtractor extends ExtractorAbstract {
 
     createExtractorResult(node: ElementNode) {
         const { tag } = node
-        if (tag === 'template')
-            return this.parseTemplateText(node)
+        if (tag === 'template') { return this.parseTemplateText(node) }
 
-        if (tag === 'script')
-            return this.parseJsText(node)
+        if (tag === 'script') { return this.parseJsText(node) }
         return []
     }
 }

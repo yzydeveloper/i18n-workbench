@@ -1,4 +1,3 @@
-
 import type { Uri, Range, TextDocument } from 'vscode'
 import { window } from 'vscode'
 import { shouldExtract } from './rules'
@@ -43,9 +42,11 @@ export default abstract class ExtractorAbstract {
     ) { }
 
     abstract readonly id: string
+
     abstract readonly extractorRuleOptions: ExtractorRuleOptions
 
     public _document: TextDocument | undefined = window.activeTextEditor?.document
+
     get document() {
         return this._document
     }
@@ -63,11 +64,12 @@ export default abstract class ExtractorAbstract {
             .replace(CLOSED_TAG, '\n') // 将 <> </> 替换为 \n
             .replace(QUOTES_CHARACTER, '') // 将 "" '' 清除
             .replace(TEMPLATE_INNER_SYMBOL, '\n') // 将 ${} 替换为 \n
-            .split(/\n/g).map(i => i.trim()).filter(Boolean) // 根据 \n 分割 去空 过滤
+            .split(/\n/g)
+            .map(i => i.trim())
+            .filter(Boolean) // 根据 \n 分割 去空 过滤
 
         const merge = [...quotesInner, ...forcedToMatch].reduce<string[]>((result, text) => {
-            if (shouldExtract(text))
-                result.push(text)
+            if (shouldExtract(text)) { result.push(text) }
 
             return result
         }, [])

@@ -5,6 +5,7 @@ import traverse from '@babel/traverse'
 
 export class BabelExtractor extends ExtractorAbstract {
     public readonly id = 'tsx'
+
     public readonly extractorRuleOptions = {
         importanceAttributes: [],
         ignoreAttributes: ['class', 'className', 'key', 'style', 'ref', 'onClick'],
@@ -30,10 +31,8 @@ export class BabelExtractor extends ExtractorAbstract {
         traverse(ast, {
             StringLiteral: (path) => {
                 const { value, start: fullStart, end: fullEnd } = path.node
-                if (!fullStart || !fullEnd)
-                    return
-                if (this.isIgnored(fullStart, fullEnd) || path.findParent(p => p.isImportDeclaration()))
-                    return
+                if (!fullStart || !fullEnd) { return }
+                if (this.isIgnored(fullStart, fullEnd) || path.findParent(p => p.isImportDeclaration())) { return }
                 this.getShouldExtractedText(value).forEach(t => {
                     const start = code.indexOf(t, fullStart)
                     const end = start + t.length
@@ -103,8 +102,7 @@ export class BabelExtractor extends ExtractorAbstract {
             },
             JSXElement: (path: any) => {
                 path?.node?.openingElement?.attributes?.forEach((i: any) => {
-                    if (this.extractorRuleOptions.ignoreAttributes.includes(i?.name?.name))
-                        this.recordIgnore(i)
+                    if (this.extractorRuleOptions.ignoreAttributes.includes(i?.name?.name)) { this.recordIgnore(i) }
                 })
             },
         })
@@ -120,8 +118,7 @@ export class BabelExtractor extends ExtractorAbstract {
         const fullStart = path?.node?.start ?? path?.start
         const fullEnd = path?.node?.end ?? path?.end
 
-        if (!fullStart || !fullEnd)
-            return
+        if (!fullStart || !fullEnd) { return }
 
         this.ignores.push([fullStart, fullEnd])
     }
