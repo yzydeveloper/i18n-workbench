@@ -11,6 +11,7 @@ import {
 import { parse } from '@babel/parser'
 import traverse from '@babel/traverse'
 import generate from '@babel/generator'
+
 export class EcmascriptParser {
     constructor(
         public readonly id: 'js' | 'ts' = 'js'

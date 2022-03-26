@@ -1,6 +1,7 @@
 import InserterAbstract, { InserterSupportType } from './base'
 import { EcmascriptInserter } from './ecmascript'
 import { JsonInserter } from './json'
+
 export class Inserter {
     private static inserters: Record<InserterSupportType, InserterAbstract> = {
         '.js': new EcmascriptInserter(),

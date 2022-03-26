@@ -4,6 +4,7 @@ import TranslateEngine from './base'
 
 export default class GoogleTranslate extends TranslateEngine {
     link = 'https://translate.google.com'
+
     apiRoot = 'https://translate.googleapis.com'
 
     async translate(options: TranslateOptions) {
@@ -41,8 +42,7 @@ export default class GoogleTranslate extends TranslateEngine {
                 detailed.push(`${v.pos}：${(v.terms.slice(0, 3) || []).join(',')}`)
             })
             r.detailed = detailed
-        }
-        catch (e) { }
+        } catch (e) { }
 
         // 尝试取得翻译结果
         try {
@@ -51,11 +51,9 @@ export default class GoogleTranslate extends TranslateEngine {
                 result.push(v.trans)
             })
             r.result = result
-        }
-        catch (e) { }
+        } catch (e) { }
 
-        if (!r.detailed && !r.result)
-            r.error = new Error('No result')
+        if (!r.detailed && !r.result) { r.error = new Error('No result') }
 
         return r
     }

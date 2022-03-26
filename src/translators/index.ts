@@ -6,9 +6,9 @@ import LibreTranslateEngine from './engines/libretranslate'
 
 export class Translator {
     engines: Record<string, TranslateEngine> = {
-        'google': new GoogleTranslateEngine(),
+        google: new GoogleTranslateEngine(),
         'google-cn': new GoogleTranslateCnEngine(),
-        'libretranslate': new LibreTranslateEngine(),
+        libretranslate: new LibreTranslateEngine(),
     }
 
     async translate(options: TranslateOptions & { engine: string }) {

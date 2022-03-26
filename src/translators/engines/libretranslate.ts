@@ -11,9 +11,8 @@ export default class LibreTranslate extends TranslateEngine {
             to = 'auto',
         } = options
 
-        let apiRoot = this.apiRoot
-        if (Config.translateApiRoot)
-            apiRoot = Config.translateApiRoot
+        let { apiRoot } = this
+        if (Config.translateApiRoot) { apiRoot = Config.translateApiRoot }
 
         const response = await axios.post(`${apiRoot}/translate`, {
             q: options.text,
@@ -23,8 +22,7 @@ export default class LibreTranslate extends TranslateEngine {
             headers: {
                 'Content-Type': 'application/json',
             },
-        },
-        )
+        })
 
         return this.transform(response, options)
     }
