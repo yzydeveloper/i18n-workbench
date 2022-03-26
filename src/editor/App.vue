@@ -13,30 +13,34 @@
                 <div class="editor-header"></div>
                 <div class="editor-title">
                     <span>Key：</span>
-                    <input class="input"
-                           v-model="item.key">
+                    <input v-model="item.key"
+                           class="input">
                     <div class="button-group">
                         <div class="button"
-                             @click="translate(item,index)">翻译</div>
+                             @click="translate(item,index)">
+                            翻译
+                        </div>
                     </div>
                 </div>
-                <div class="editor-core"
-                     v-for="(locale,index) in allLocales"
-                     :key="index">
-                    <div class="editor-core-translate">{{ locale }}</div>
-                    <div class="editor-core-content">
-                        <input class="input"
-                               v-model="item.languages[locale]">
+                <div v-for="(locale,localeIndex) in allLocales"
+                     :key="localeIndex"
+                     class="editor-core">
+                    <div class="editor-core-translate">
+                        {{ locale }}
                     </div>
-                    <div class="editor-core-path"
-                         v-if="dirStructure==='dir'">
-                        <select class="select"
-                                :title="item.insertPath[locale]"
-                                v-model="item.insertPath[locale]">
-                            <option class="option"
-                                    :value="path"
-                                    v-for="path in languageMapFile[locale]"
-                                    :key="path">
+                    <div class="editor-core-content">
+                        <input v-model="item.languages[locale]"
+                               class="input">
+                    </div>
+                    <div v-if="dirStructure==='dir'"
+                         class="editor-core-path">
+                        <select v-model="item.insertPath[locale]"
+                                class="select"
+                                :title="item.insertPath[locale]">
+                            <option v-for="path in languageMapFile[locale]"
+                                    :key="path"
+                                    class="option"
+                                    :value="path">
                                 {{ path }}
                             </option>
                         </select>
@@ -50,6 +54,7 @@
 import type { PendingWrite } from './../core'
 import { EventTypes } from './events'
 import { vscode, useWorkbenchStore } from './useWorkbenchStore'
+
 export default {
     setup() {
         const {

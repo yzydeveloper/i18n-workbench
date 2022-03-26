@@ -2,6 +2,7 @@ import type { DirStructure, PendingWrite } from './../core'
 import { ComputedRef } from 'vue'
 import { reactive, toRefs, computed } from 'vue'
 import { EventTypes } from './events'
+
 interface WorkbenchStore {
     config: {
         allLocales: string[]
