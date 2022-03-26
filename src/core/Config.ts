@@ -1,8 +1,10 @@
 import type { ConfigurationScope, WorkspaceFolder } from 'vscode'
 import { workspace, ExtensionContext } from 'vscode'
 import { EXT_NAMESPACE } from './../meta'
+
 export default class Config {
     static extName: string
+
     static ctx: ExtensionContext
 
     static get extensionName() {
@@ -73,9 +75,10 @@ export default class Config {
                 .update(key, undefined, isGlobal)
         }
 
-        // update value
-        return await workspace
+        const implement = await workspace
             .getConfiguration(this.extensionName)
             .update(key, value, isGlobal)
+
+        return implement
     }
 }

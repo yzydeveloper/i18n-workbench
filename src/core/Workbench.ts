@@ -19,7 +19,9 @@ export enum EventTypes {
 
 export class Workbench {
     public static workbench: Workbench | undefined
+
     private readonly panel: WebviewPanel
+
     private disposables: Disposable[] = []
 
     private get config() {
@@ -68,8 +70,7 @@ export class Workbench {
     }
 
     static createWorkbench() {
-        if (!Workbench.workbench)
-            Workbench.workbench = new Workbench()
+        if (!Workbench.workbench) { Workbench.workbench = new Workbench() }
         return Workbench.workbench
     }
 

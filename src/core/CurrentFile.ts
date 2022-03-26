@@ -11,28 +11,29 @@ import { findLanguage } from './../utils'
 import { Extractor } from '../extractors'
 import { Translator } from './Translator'
 import { Inserter } from '../inserters'
+
 export class CurrentFile {
     static uri: Uri | undefined
+
     static _extractor: Extractor | null = null
+
     static _extractor_result: ExtractorResult[]
+
     static watch(ctx: ExtensionContext) {
         ctx.subscriptions.push(workspace.onDidSaveTextDocument(e => this.uri && e?.uri === this.uri && this.update(e.uri)))
         ctx.subscriptions.push(workspace.onDidChangeTextDocument(e => this.uri && e?.document.uri === this.uri && this.update(e.document.uri)))
         ctx.subscriptions.push(window.onDidChangeActiveTextEditor(e => e?.document.uri && this.update(e.document.uri)))
-        if (window.activeTextEditor)
-            this.update(window.activeTextEditor.document.uri)
+        if (window.activeTextEditor) { this.update(window.activeTextEditor.document.uri) }
     }
 
     static update(uri: Uri) {
         this.uri = uri
-        if (this._extractor?.id !== this.id)
-            this._extractor = new Extractor(uri)
+        if (this._extractor?.id !== this.id) { this._extractor = new Extractor(uri) }
         this.extract()
     }
 
     static get id() {
-        if (this.uri)
-            return extname(this.uri.fsPath)
+        if (this.uri) { return extname(this.uri.fsPath) }
         return ''
     }
 
@@ -55,7 +56,8 @@ export class CurrentFile {
                 languages: PendingWrite['languages']
             }>((_, locale) => {
                 _.languages[locale] = locale === from ? item.text : ''
-                _.insertPath[locale] = languageMapFile[locale][0]
+                const [defaultIntertPath] = languageMapFile[locale]
+                _.insertPath[locale] = defaultIntertPath
                 return _
             }, {
                 insertPath: {},
@@ -126,7 +128,7 @@ export class CurrentFile {
     }
 
     static async translate(text: string) {
-        const allLocales = Global.loader.allLocales
+        const { allLocales } = Global.loader
         const from = findLanguage(Config.sourceLanguage)
         const result = await Translator.translate(from, text, allLocales)
         return Promise.resolve(result)

@@ -7,10 +7,14 @@ import { Loader } from './Loader'
 import { Log, findLanguage } from './../../utils'
 import { Global } from '..'
 import Config from '../Config'
+
 export class LocaleLoader extends Loader {
     private _files: Record<string, ParsedFile> = {}
+
     private _path_matcher!: RegExp
+
     private _dir_structure: DirStructure = ''
+
     constructor(
         public readonly rootPath: string
     ) {
@@ -28,8 +32,7 @@ export class LocaleLoader extends Loader {
     async init(watch = true) {
         await this.setPathMather()
         await this.loadDirectory(this.localesDir)
-        if (watch)
-            this.watchOn(this.localesDir)
+        if (watch) { this.watchOn(this.localesDir) }
 
         Log.divider()
     }
@@ -43,10 +46,9 @@ export class LocaleLoader extends Loader {
         if (dirnames.length) {
             this._dir_structure = 'dir'
             regex = '^(?<locale>[\\w-_]+)(?:.*/|^).*\\.(js|ts|json)$'
-        }
-        else {
+        } else {
             this._dir_structure = 'file'
-            regex = '^(?<locale>[\\w-_]+)\.(js|ts|json)$'
+            regex = '^(?<locale>[\\w-_]+).(js|ts|json)$'
         }
         this._path_matcher = new RegExp(regex)
     }
@@ -71,8 +73,7 @@ export class LocaleLoader extends Loader {
     get allLocales() {
         return Object.keys(this.files).reduce<string[]>((result, key) => {
             const { locale } = this.files[key]
-            if (!result.includes(locale))
-                result.push(locale)
+            if (!result.includes(locale)) { result.push(locale) }
             return result
         }, [])
     }
@@ -96,13 +97,9 @@ export class LocaleLoader extends Loader {
                     const text: string = Reflect.get(flattenValue, keypath)
                     const keypaths = map.get(text)
                     let item = keypath
-                    if(this.dirStructure === 'dir')
-                        item = `${group}.${keypath}`
+                    if (this.dirStructure === 'dir') { item = `${group}.${keypath}` }
 
-                    if (!keypaths)
-                        map.set(text, [item])
-                    else
-                        map.set(text, keypaths.concat(item))
+                    if (!keypaths) { map.set(text, [item]) } else { map.set(text, keypaths.concat(item)) }
                 })
             }
         })
@@ -113,10 +110,8 @@ export class LocaleLoader extends Loader {
     get languageMapFile() {
         return Object.keys(this.files).reduce<Record<string, string[]>>((result, key) => {
             const { locale } = this.files[key]
-            if (!result[locale])
-                result[locale] = []
-            if (!result[locale].includes(key))
-                result[locale].push(key)
+            if (!result[locale]) { result[locale] = [] }
+            if (!result[locale].includes(key)) { result[locale].push(key) }
             return result
         }, {})
     }
@@ -130,8 +125,9 @@ export class LocaleLoader extends Loader {
             ]
         })
 
-        for (const relative of files)
-            await this.loadFile(searchingPath, relative)
+        Promise.all(
+            files.map(relative => this.loadFile(searchingPath, relative))
+        )
     }
 
     private getFileInfo(dirPath: string, relativePath: string) {
@@ -141,11 +137,9 @@ export class LocaleLoader extends Loader {
 
         const matcher = this._path_matcher
         const match = matcher.exec(relativePath)
-        if (!match || match.length < 1)
-            return
+        if (!match || match.length < 1) { return }
         const locale = match.groups?.locale
-        if (!locale)
-            return
+        if (!locale) { return }
         const parser = Global.getMatchedParser(ext)
         return {
             originLocale: locale,
@@ -173,8 +167,7 @@ export class LocaleLoader extends Loader {
                 unflattenValue: value,
                 flattenValue
             }
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e)
         }
     }

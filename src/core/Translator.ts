@@ -12,43 +12,39 @@ export class Translator {
 
         const errors: unknown[] = []
 
-        if (!text)
+        if (!text) {
             return ''
+        }
 
         for (const engine of engines) {
             try {
+                // eslint-disable-next-line no-await-in-loop
                 trans_result = await this._translator.translate({ engine, text, from, to })
-                if (trans_result.error)
-                    throw trans_result.error
+                if (trans_result.error) { throw trans_result.error }
 
                 break
-            }
-            catch (e) {
+            } catch (e) {
                 errors.push(e)
             }
         }
 
         const result = trans_result && (trans_result.result || []).join('\n')
 
-        if (!result)
-            throw errors[0]
+        if (!result) { throw errors[0] }
 
         return result
     }
 
     static translate(from: string, text: string, langs: string[]) {
-        const sourceLanguage = Config.sourceLanguage
+        const { sourceLanguage } = Config
 
         const tasks = langs.map(lang => {
-            if (sourceLanguage === lang)
-                return Promise.resolve({ lang, text })
+            if (sourceLanguage === lang) { return Promise.resolve({ lang, text }) }
 
-            return this.translateText(text, from, lang).then((result) => {
-                return {
-                    lang,
-                    text: result
-                }
-            }).catch(() => {
+            return this.translateText(text, from, lang).then((result) => ({
+                lang,
+                text: result
+            })).catch(() => {
                 Log.warn('NetWork Error')
 
                 return {
@@ -58,12 +54,10 @@ export class Translator {
             })
         })
 
-        return Promise.all(tasks).then(data => {
-            return data.reduce((_, item) => {
-                const { lang, text } = item
-                _[lang] = text
+        return Promise.all(tasks).then(data =>
+            data.reduce<Record<string, string>>((_, item) => {
+                _[item.lang] = item.text
                 return _
-            }, {} as { [key: string]: string })
-        })
+            }, {}))
     }
 }

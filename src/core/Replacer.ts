@@ -10,10 +10,7 @@ export class Replacer {
         const { extractorResult } = CurrentFile
         const edit = new WorkspaceEdit()
 
-        for (const i of extractorResult) {
-            const task = await refactorExtract(i, caller)
-            this.queue.push(Promise.resolve(task))
-        }
+        this.queue = extractorResult.map(i => refactorExtract(i, caller))
 
         Promise.all(
             this.queue

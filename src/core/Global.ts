@@ -5,9 +5,12 @@ import { LocaleLoader } from './loaders/LocaleLoader'
 import { AvailableParsers } from './../parsers'
 import { Log } from './../utils'
 import Config from './Config'
+
 export class Global {
     private static _loaders: Record<string, LocaleLoader> = {}
+
     private static _rootPath: string
+
     private static _currentWorkspaceFolder: WorkspaceFolder
 
     static context: ExtensionContext
@@ -38,10 +41,7 @@ export class Global {
     static get localesPath(): string | undefined {
         let config
 
-        if (this._currentWorkspaceFolder)
-            config = Config.getLocalesPathsInScope(this._currentWorkspaceFolder)
-        else
-            config = Config.localesPath
+        if (this._currentWorkspaceFolder) { config = Config.getLocalesPathsInScope(this._currentWorkspaceFolder) } else { config = Config.localesPath }
         return config
     }
 
@@ -59,8 +59,7 @@ export class Global {
         if (!hasLocalesSet) {
             ConfigLocalesGuide.autoSet()
             this.unloadAll()
-        }
-        else {
+        } else {
             await this.initLoader(this.rootPath)
         }
     }
@@ -71,11 +70,9 @@ export class Global {
     }
 
     private static async initLoader(rootPath: string, reload = false) {
-        if (!rootPath)
-            return
+        if (!rootPath) { return }
 
-        if (this._loaders[rootPath] && !reload)
-            return this._loaders[rootPath]
+        if (this._loaders[rootPath] && !reload) { return this._loaders[rootPath] }
 
         const loader = new LocaleLoader(rootPath)
         await loader.init()
@@ -89,8 +86,7 @@ export class Global {
         const editor = window.activeTextEditor
         let rootPath = ''
 
-        if (!editor || !workspace.workspaceFolders || workspace.workspaceFolders.length === 0)
-            return
+        if (!editor || !workspace.workspaceFolders || workspace.workspaceFolders.length === 0) { return }
 
         const resource = editor.document.uri
         if (resource.scheme === 'file') {
@@ -101,8 +97,7 @@ export class Global {
             }
         }
 
-        if (!rootPath && workspace.workspaceFolders[0].uri.fsPath)
-            rootPath = workspace.workspaceFolders[0].uri.fsPath
+        if (!rootPath && workspace.workspaceFolders[0].uri.fsPath) { rootPath = workspace.workspaceFolders[0].uri.fsPath }
 
         if (rootPath && rootPath !== this.rootPath) {
             this.rootPath = rootPath

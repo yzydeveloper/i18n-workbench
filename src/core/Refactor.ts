@@ -15,8 +15,7 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
 
     switch (type) {
         case 'html-inline':
-            if (!isDynamic)
-                refactorTextResult.replaceTo = `{{ ${replaceTo} }}`
+            if (!isDynamic) { refactorTextResult.replaceTo = `{{ ${replaceTo} }}` }
             if (isDynamic) {
                 refactorTextResult.replaceTo = replaceTo
                 refactorTextResult.range = range.with({
@@ -26,7 +25,7 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
             }
             break
         case 'html-inline-template':
-            refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
+            refactorTextResult.replaceTo = `\${${replaceTo}}`
             break
         case 'html-attribute':
             if (isDynamic) {
@@ -45,11 +44,10 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
             }
             break
         case 'html-attribute-template':
-            refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
+            refactorTextResult.replaceTo = `\${${replaceTo}}`
             break
         case 'js-string':
-            if (!isSetup && !isJsx)
-                refactorTextResult.replaceTo = `this.${replaceTo}`
+            if (!isSetup && !isJsx) { refactorTextResult.replaceTo = `this.${replaceTo}` }
 
             refactorTextResult.range = range.with({
                 start: range.start.translate(0, -1),
@@ -57,15 +55,13 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
             })
             break
         case 'js-template':
-            if (!isSetup)
-                refactorTextResult.replaceTo = `\$\{this.${replaceTo}\}`
+            if (!isSetup) { refactorTextResult.replaceTo = `\${this.${replaceTo}}` }
 
-            if (isSetup || isJsx)
-                refactorTextResult.replaceTo = `\$\{${replaceTo}\}`
+            if (isSetup || isJsx) { refactorTextResult.replaceTo = `\${${replaceTo}}` }
 
             break
         case 'jsx-text':
-            refactorTextResult.replaceTo = `\{ ${replaceTo} \}`
+            refactorTextResult.replaceTo = `{ ${replaceTo} }`
             refactorTextResult.range = range.with({
                 start: range.start.translate(0, -1),
                 end: range.end.translate(0, 1),
@@ -94,8 +90,7 @@ export function refactorExtract(extracted: ExtractorResult, caller: string): Pro
                     commit(extracted, keypath as string, caller)
                 )
             })
-        }
-        else {
+        } else {
             resolve(
                 commit(extracted, items[0], caller)
             )
