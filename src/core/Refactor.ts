@@ -62,10 +62,6 @@ function commit(extracted: ExtractorResult, keypath: string, caller: string) {
             break
         case 'jsx-text':
             refactorTextResult.replaceTo = `{ ${replaceTo} }`
-            refactorTextResult.range = range.with({
-                start: range.start.translate(0, -1),
-                end: range.end.translate(0, 1),
-            })
             break
         default:
             refactorTextResult = null
