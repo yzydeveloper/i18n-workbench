@@ -1,10 +1,11 @@
-import ExtractorAbstract, { ExtractorOptions, ExtractorResult } from './base'
+import ExtractorAbstract, { ExtractSupportedExtensions, ExtractorOptions, ExtractorResult } from './base'
 import { workspace, Range } from 'vscode'
 import { parse as babelParse } from '@babel/parser'
 import traverse from '@babel/traverse'
+import { extractFromText, extractFromPlainText } from './rules'
 
 export class BabelExtractor extends ExtractorAbstract {
-    public readonly id = 'tsx'
+    public readonly id = ExtractSupportedExtensions.JS
 
     public readonly extractorRuleOptions = {
         importanceAttributes: [],
@@ -33,7 +34,7 @@ export class BabelExtractor extends ExtractorAbstract {
                 const { value, start: fullStart, end: fullEnd } = path.node
                 if (!fullStart || !fullEnd) { return }
                 if (this.isIgnored(fullStart, fullEnd) || path.findParent(p => p.isImportDeclaration())) { return }
-                this.getShouldExtractedText(value).forEach(t => {
+                extractFromText(value).forEach(t => {
                     const start = code.indexOf(t, fullStart)
                     const end = start + t.length
                     const range = new Range(
@@ -58,7 +59,7 @@ export class BabelExtractor extends ExtractorAbstract {
                     start: item.node.start
                 }))
                 value.forEach(item => {
-                    this.getShouldExtractedText(item.text).forEach(t => {
+                    extractFromText(item.text).forEach(t => {
                         if (item.start) {
                             const start = code.indexOf(t, item.start)
                             const end = start + t.length
@@ -82,7 +83,7 @@ export class BabelExtractor extends ExtractorAbstract {
             JSXText: (path) => {
                 const { value, start: fullStart } = path.node
                 if (!fullStart) return
-                this.getPlainText(value).forEach(t => {
+                extractFromPlainText(value).forEach(t => {
                     const start = code.indexOf(t, fullStart)
                     const end = start + t.length
                     const range = new Range(

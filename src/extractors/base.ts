@@ -1,9 +1,15 @@
 import type { Uri, Range, TextDocument } from 'vscode'
 import { window } from 'vscode'
-import { shouldExtract } from './rules'
-import { QUOTES_CHARACTER, TEMPLATE_INNER_SYMBOL, CLOSED_TAG } from '../meta'
 
-export type ExtractorId = 'vue' | 'tsx' | 'jsx'
+export enum ExtractSupportedExtensions {
+    VUE = 'vue',
+    TSX = 'tsx',
+    JSX = 'jsx',
+    TS = 'ts',
+    JS = 'js'
+}
+
+export type ExtractorId = `${ExtractSupportedExtensions}`
 
 export type ExtractorType = 'html-attribute' | 'html-attribute-template' | 'html-inline' | 'html-inline-template' | 'js-string' | 'js-template' | 'jsx-text'
 
@@ -53,32 +59,6 @@ export default abstract class ExtractorAbstract {
 
     set document(value) {
         this._document = value
-    }
-
-    public shouldExtract = shouldExtract
-
-    public getShouldExtractedText(content: string): string[] {
-        const quotesInner = content.match(QUOTES_CHARACTER) || [] // 引号内的
-        const forcedToMatch = content
-            .replace(/`/g, '\n') // 将 ` 替换为 \n
-            .replace(CLOSED_TAG, '\n') // 将 <> </> 替换为 \n
-            .replace(QUOTES_CHARACTER, '') // 将 "" '' 清除
-            .replace(TEMPLATE_INNER_SYMBOL, '\n') // 将 ${} 替换为 \n
-            .split(/\n/g)
-            .map(i => i.trim())
-            .filter(Boolean) // 根据 \n 分割 去空 过滤
-
-        const merge = [...quotesInner, ...forcedToMatch].reduce<string[]>((result, text) => {
-            if (shouldExtract(text)) { result.push(text) }
-
-            return result
-        }, [])
-
-        return merge
-    }
-
-    public getPlainText(content: string): string[] {
-        return content.split(/\n/g).map(i => i.trim()).filter(Boolean)
     }
 
     abstract extractor(options: ExtractorOptions): Promise<ExtractorResult[]>

@@ -1,13 +1,16 @@
 import { Uri } from 'vscode'
 import { extname } from 'path'
-import ExtractorAbstract, { ExtractorOptions } from './base'
-import { SfcExtractor } from './Sfc'
+import ExtractorAbstract, { ExtractSupportedExtensions, ExtractorOptions } from './base'
+import { SfcExtractor } from './sfc'
 import { BabelExtractor } from './babel'
 
 export class Extractor {
     extractors: Record<string, ExtractorAbstract> = {
-        '.vue': new SfcExtractor(this.uri),
-        '.tsx': new BabelExtractor(this.uri)
+        [`.${ExtractSupportedExtensions.VUE}`]: new SfcExtractor(this.uri),
+        [`.${ExtractSupportedExtensions.TSX}`]: new BabelExtractor(this.uri),
+        [`.${ExtractSupportedExtensions.JSX}`]: new BabelExtractor(this.uri),
+        [`.${ExtractSupportedExtensions.TS}`]: new BabelExtractor(this.uri),
+        [`.${ExtractSupportedExtensions.JS}`]: new BabelExtractor(this.uri)
     }
 
     constructor(

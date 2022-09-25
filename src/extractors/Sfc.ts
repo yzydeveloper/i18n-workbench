@@ -1,4 +1,4 @@
-import ExtractorAbstract, { ExtractorOptions, ExtractorResult } from './base'
+import ExtractorAbstract, { ExtractSupportedExtensions, ExtractorOptions, ExtractorResult } from './base'
 import { workspace, Range } from 'vscode'
 import {
     TemplateChildNode,
@@ -14,10 +14,11 @@ import {
 import { ParserPlugin, parse as babelParse } from '@babel/parser'
 import traverse from '@babel/traverse'
 import { isIdentifier } from '@babel/types'
+import { shouldExtract, extractFromText, extractFromPlainText } from './rules'
 import { TEMPLATE_STRING } from '../meta'
 
 export class SfcExtractor extends ExtractorAbstract {
-    public readonly id = 'vue'
+    public readonly id = ExtractSupportedExtensions.VUE
 
     public readonly extractorRuleOptions = {
         importanceAttributes: ['bind', 'title', 'name', 'label', 'placeholder', 'tooltip', 'tip'],
@@ -89,7 +90,7 @@ export class SfcExtractor extends ExtractorAbstract {
             const { exp } = node
             if (exp && this.isSimpleExpressionNode(exp)) {
                 const { loc, content } = exp
-                this.getShouldExtractedText(content).forEach(t => {
+                extractFromText(content).forEach(t => {
                     const start = source.indexOf(t, loc.start.offset)
                     const end = start + t.length
                     const range = new Range(
@@ -114,7 +115,7 @@ export class SfcExtractor extends ExtractorAbstract {
                 if (!this.isInterPolation(node)) {
                     // source中包含 \n
                     const { loc } = node
-                    this.getPlainText(loc.source).forEach(t => {
+                    extractFromPlainText(loc.source).forEach(t => {
                         const start = source.indexOf(t, loc.start.offset)
                         const end = start + t.length
                         const range = new Range(
@@ -132,7 +133,7 @@ export class SfcExtractor extends ExtractorAbstract {
                     })
                 } else if (this.isSimpleExpressionNode(node.content)) {
                     const { content, loc } = node.content
-                    this.getShouldExtractedText(content).forEach(t => {
+                    extractFromText(content).forEach(t => {
                         const start = source.indexOf(t, loc.start.offset)
                         const end = start + t.length
                         const range = new Range(
@@ -246,7 +247,7 @@ export class SfcExtractor extends ExtractorAbstract {
                 },
                 StringLiteral: (path) => {
                     const { value, start, end } = path.node
-                    if (!this.shouldExtract(value)) return
+                    if (!shouldExtract(value)) return
                     if (!start || !end) return
                     if (path.findParent(p => p.isImportDeclaration())) return
                     const range = new Range(
@@ -270,7 +271,7 @@ export class SfcExtractor extends ExtractorAbstract {
                         start: item.node.start
                     }))
                     value.forEach(item => {
-                        this.getShouldExtractedText(item.text).forEach(t => {
+                        extractFromText(item.text).forEach(t => {
                             if (item.start) {
                                 const start = source.indexOf(t, item.start)
                                 const end = start + t.length
@@ -300,7 +301,6 @@ export class SfcExtractor extends ExtractorAbstract {
     createExtractorResult(node: ElementNode) {
         const { tag } = node
         if (tag === 'template') { return this.parseTemplateText(node) }
-
         if (tag === 'script') { return this.parseJsText(node) }
         return []
     }
