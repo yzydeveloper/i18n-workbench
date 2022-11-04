@@ -1,4 +1,4 @@
-import ExtractorAbstract, { ExtractorSupportedExtensions, ExtractorOptions, ExtractorResult } from './base'
+import ExtractorAbstract, { ExtractorSupportedExtension, ExtractorOptions, ExtractorResult } from './base'
 import { workspace, Range } from 'vscode'
 import {
     TemplateChildNode,
@@ -18,7 +18,7 @@ import { shouldExtract, extractFromText, extractFromPlainText } from './rules'
 import { TEMPLATE_STRING } from '../meta'
 
 export class SfcExtractor extends ExtractorAbstract {
-    public readonly id = ExtractorSupportedExtensions.VUE
+    public readonly id = ExtractorSupportedExtension.VUE
 
     public readonly extractorRuleOptions = {
         importanceAttributes: ['bind', 'title', 'name', 'label', 'placeholder', 'tooltip', 'tip'],

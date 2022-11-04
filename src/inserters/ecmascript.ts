@@ -4,15 +4,11 @@ import traverse from '@babel/traverse'
 import { stringLiteral, objectProperty, identifier, isExportDefaultDeclaration, isObjectProperty, isIdentifier, isStringLiteral } from '@babel/types'
 import generate from '@babel/generator'
 import { unflatten } from 'flat'
-import Inserter from './base'
+import Inserter, { InserterSupportedExtension } from './base'
 import { SPECIAL_CHARACTERS } from './../meta'
 
 export class EcmascriptInserter extends Inserter {
-    constructor(
-        public readonly id: 'js' | 'ts' = 'js'
-    ) {
-        super()
-    }
+    public readonly id = InserterSupportedExtension.JS
 
     async insert(filepath: string, value: object) {
         const file = this.files[filepath]

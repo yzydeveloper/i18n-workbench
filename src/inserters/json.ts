@@ -1,13 +1,9 @@
 import { writeFileSync } from 'fs'
 import { unflatten } from 'flat'
-import Inserter from './base'
+import Inserter, { InserterSupportedExtension } from './base'
 
 export class JsonInserter extends Inserter {
-    constructor(
-        public readonly id = 'json'
-    ) {
-        super()
-    }
+    public readonly id = InserterSupportedExtension.JSON
 
     async insert(filepath: string, value: object) {
         const file = this.files[filepath]

@@ -1,7 +1,7 @@
 import type { Uri, Range, TextDocument } from 'vscode'
 import { window } from 'vscode'
 
-export enum ExtractorSupportedExtensions {
+export enum ExtractorSupportedExtension {
     VUE = 'vue',
     TSX = 'tsx',
     JSX = 'jsx',
@@ -9,7 +9,7 @@ export enum ExtractorSupportedExtensions {
     JS = 'js'
 }
 
-export type ExtractorId = `${ExtractorSupportedExtensions}`
+export type ExtractorId = `${ExtractorSupportedExtension}`
 
 export type ExtractorType = 'html-attribute' | 'html-attribute-template' | 'html-inline' | 'html-inline-template' | 'js-string' | 'js-template' | 'jsx-text'
 

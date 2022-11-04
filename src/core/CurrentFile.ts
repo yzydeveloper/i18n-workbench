@@ -1,7 +1,7 @@
 import type { ExtensionContext, Uri } from 'vscode'
 import type { ExtractorResult } from '../extractors/base'
 import type { Dictionary, PendingWrite, PendingWriteParsed } from '.'
-import type { InserterSupportType } from '../inserters/base'
+import type { InserterId } from '../inserters/base'
 import { workspace, window } from 'vscode'
 import { extname } from 'path'
 import { unflatten } from 'flat'
@@ -97,7 +97,9 @@ export class CurrentFile {
         Promise.all(
             files.map(file => {
                 const { flattenData } = pendingWrite[file]
-                return Inserter.insert(extname(file) as InserterSupportType, file, flattenData)
+                const ext = extname(file)
+                const inserterId = ext.substring(1)
+                return Inserter.insert(inserterId as InserterId, file, flattenData)
             })
         )
     }

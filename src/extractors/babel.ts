@@ -1,11 +1,11 @@
-import ExtractorAbstract, { ExtractorSupportedExtensions, ExtractorOptions, ExtractorResult } from './base'
+import ExtractorAbstract, { ExtractorSupportedExtension, ExtractorOptions, ExtractorResult } from './base'
 import { workspace, Range } from 'vscode'
 import { parse as babelParse } from '@babel/parser'
 import traverse from '@babel/traverse'
 import { extractFromText, extractFromPlainText } from './rules'
 
 export class BabelExtractor extends ExtractorAbstract {
-    public readonly id = ExtractorSupportedExtensions.JS
+    public readonly id = ExtractorSupportedExtension.JS
 
     public readonly extractorRuleOptions = {
         importanceAttributes: [],
