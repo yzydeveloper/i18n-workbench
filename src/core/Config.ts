@@ -15,6 +15,10 @@ export default class Config {
         return this.ctx.extension.extensionPath
     }
 
+    static get extensionUri() {
+        return this.ctx.extensionUri
+    }
+
     static get localesPath(): string {
         return this.getConfig<string>('localesPath') ?? ''
     }

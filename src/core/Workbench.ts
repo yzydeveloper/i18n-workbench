@@ -64,7 +64,7 @@ export class Workbench {
         this.panel.iconPath = Uri.file(
             join(Config.extensionPath, 'resources/workbench.svg')
         )
-        this.panel.webview.html = getHtmlForWebview(Config.extensionPath, 'resources/workbench/index.html')
+        this.panel.webview.html = getHtmlForWebview(this.panel.webview, Config.extensionUri, 'resources/workbench/index.html')
         this.panel.webview.onDidReceiveMessage((message) => this.handleMessages(message), null, this.disposables)
         this.panel.onDidDispose(() => this.dispose(), null, this.disposables)
     }
